@@ -18,8 +18,10 @@ import (
 
 type Code int
 
-func (c Code) New() Error {
-	return NewGeasserr(c)
+func (c Code) New(args ...any) Error {
+	geasserr := NewGeasserr(c)
+	geasserr.Message = fmt.Sprintf("%v", args)
+	return geasserr
 }
 
 type Error struct {
