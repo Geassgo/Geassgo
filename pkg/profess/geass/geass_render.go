@@ -30,8 +30,19 @@ func RenderStr(ctx contract.Context, str string) (string, error) {
 
 // RenderObject4Yaml template渲染对象使用 使用yaml作为中间媒介
 // ctx 上下文变量
+// obj 对象 渲染后将最终保存在此
+func RenderObject4Yaml(ctx contract.Context, obj any) error {
+	yml, err := yaml.Marshal(obj)
+	if err != nil {
+		return err
+	}
+	return yaml.Unmarshal(yml, &obj)
+}
+
+// RenderObject4YamlStr template渲染对象使用 使用yaml作为中间媒介
+// ctx 上下文变量
 // obj 对象
-func RenderObject4Yaml(ctx contract.Context, obj any) (string, error) {
+func RenderObject4YamlStr(ctx contract.Context, obj any) (string, error) {
 	yml, err := yaml.Marshal(obj)
 	if err != nil {
 		return "", err

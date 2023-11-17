@@ -12,41 +12,52 @@
 package geass
 
 import (
-	"errors"
-	"fmt"
+	"github.com/lengpucheng/Geassgo/pkg/geasserr"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
 )
 
-var executors = make(map[string]Geass)
+var geasses = make(map[string]Geass)
 
 // Execute 执行模块
-func Execute(ctx contract.Context, name string, module any) error {
+// val 不可以是指针
+func Execute(ctx contract.Context, name string, val any) error {
+	if ctx == nil {
+		ctx = contract.DefaultContext()
+	}
 	executor := GetGeass(name)
-	if !executor.OverallRender() {
-		return executor.Execute(ctx, module)
-	}
 	if executor == nil {
-		return errors.New(fmt.Sprintf("the module %s is not found!", name))
+		return geasserr.ModuleValueNotSupport.New(name)
 	}
-	str, err := RenderObject4Yaml(ctx, module)
-	if err != nil {
-		return err
+	// 整体渲染
+	if executor.OverallRender() {
+		if err := RenderObject4Yaml(ctx, &val); err != nil {
+			return err
+		}
 	}
-	return executor.Execute(ctx, str)
+	// 重载渲染
+	if ok, instance := executor.OverloadRender(); ok {
+		if err := TransObject4Json(instance, val); err != nil {
+			return err
+		}
+		val = instance
+	}
+
+	return executor.Execute(ctx, val)
 }
 
 // GetGeass 获取执行器
 func GetGeass(name string) Geass {
-	return executors[name]
+	return geasses[name]
 }
 
 // 注册执行器
 func registerGeass(name string, exec Geass) {
-	executors[name] = exec
+	geasses[name] = exec
 }
 
 // Geass 定义执行器
 type Geass interface {
 	Execute(ctx contract.Context, val any) error
 	OverallRender() bool
+	OverloadRender() (bool, any)
 }

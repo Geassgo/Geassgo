@@ -19,7 +19,7 @@ type Task struct {
 
 type Shell struct {
 	Shell    string `json:"shell" yaml:"shell"`
-	WinShell string `json:"win_shell" yaml:"winShell"`
+	WinShell string `json:"win_shell" yaml:"win_shell"`
 }
 
 type Mod map[string]any

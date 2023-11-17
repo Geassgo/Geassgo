@@ -17,7 +17,7 @@ type Variable struct {
 	Register map[string]any `json:"register"` // 注册变量
 }
 
-func (v *Variable) Check() {
+func (v *Variable) Check() *Variable {
 	if v.System == nil {
 		v.System = make(map[string]any)
 	}
@@ -27,6 +27,7 @@ func (v *Variable) Check() {
 	if v.Values == nil {
 		v.Values = make(map[string]any)
 	}
+	return v
 }
 
 func (v *Variable) ToMap() map[string]any {

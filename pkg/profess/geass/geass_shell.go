@@ -15,6 +15,7 @@ import (
 	"github.com/lengpucheng/Geassgo/pkg/coderender"
 	"github.com/lengpucheng/Geassgo/pkg/geasserr"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
+	"log/slog"
 	"runtime"
 )
 
@@ -29,14 +30,16 @@ type geassShell struct{}
 func (g *geassShell) Execute(ctx contract.Context, val any) error {
 	shell, ok := val.(contract.Shell)
 	if !ok {
-		return geasserr.ModuleValueNotSupport.New()
+		return geasserr.ModuleValueNotSupport.New(val)
 	}
 	var std, ste string
 	var err error
 	switch runtime.GOOS {
 	case "linux":
+		slog.Info("execute Shell:->" + shell.Shell)
 		std, ste, err = coderender.ExecShell(ctx, shell.Shell)
 	case "windows":
+		slog.Info("execute Shell:-> " + shell.WinShell)
 		std, ste, err = coderender.ExecShell(ctx, shell.WinShell)
 		std = string(coderender.EncodeAuto2Utf8([]byte(std)))
 		ste = string(coderender.EncodeAuto2Utf8([]byte(ste)))
@@ -50,7 +53,6 @@ func (g *geassShell) OverallRender() bool {
 	return true
 }
 
-func (g *geassShell) executeShell(ctx contract.Context, shell string) (string, string, error) {
-
-	return coderender.ExecShell(ctx, shell)
+func (g *geassShell) OverloadRender() (bool, any) {
+	return false, nil
 }
