@@ -1,3 +1,17 @@
+- name: test
+  tasks:
+    - name: pwd
+      shell: pwd
+      win_shell: echo %cd%
+      register: pwd
+
+    - name: save pwd
+      file:
+        content: '{{.register.pwd}}'
+        dest: '{{.values.dir}}\out\pwd.log'
+        action: file
+
+
 - name: claim
   include: '{{.values.dir}}\include_task.yaml'
 
@@ -13,7 +27,3 @@
     - "i4"
     - "{{.register.tasklist}}"
     - '{{eqs .values.cusa_gray_enable "true"}}'
-#name: step3.5 template
-#template:
-#  src: 'C:\dev\go\src\Geassgo\example\execute_claim\otnm-manager.yaml'
-#  dest: '{{.values.dir}}\out\manager_{{.values.service.index}}.yaml'

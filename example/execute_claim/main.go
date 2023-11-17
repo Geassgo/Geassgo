@@ -21,7 +21,7 @@ import (
 )
 
 func test() {
-	file, err := os.ReadFile("C:\\dev\\go\\src\\Geassgo\\example\\execute_claim\\values.yaml")
+	file, err := os.ReadFile("example/execute_claim/values.yaml")
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +30,7 @@ func test() {
 		panic(err)
 	}
 	ctx := helper.NewContext(context.Background(), values)
-	if err = helper.LoadAndExecute4File(ctx, "C:\\dev\\go\\src\\Geassgo\\example\\execute_claim\\claim.yaml"); err != nil {
+	if err = helper.LoadAndExecute4File(ctx, "example/execute_claim/claim.yaml"); err != nil {
 		panic(err)
 	}
 	fmt.Println(ctx)

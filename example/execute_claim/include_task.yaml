@@ -6,7 +6,7 @@
   win_shell: 'echo "step1" > {{.values.dir}}\out\{{.values.name}}.yaml'
 
 - name: step3 register
-  win_shell: tasklist |findstr goland
+  win_shell: tasklist |findstr idea
   register: tasklist
   ignore_error: true
 
