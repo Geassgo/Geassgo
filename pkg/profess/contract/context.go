@@ -18,7 +18,10 @@ type Context interface {
 	GetVariable() *Variable
 	GetItem() any
 	GetItemIndex() int
-	GenerateSubContext(item any, index int) Context
+	GenLocation() string
+	SubContext(item any, index int) Context
 	SetStdout(stdout string)
 	SetStderr(stderr string)
+	GetStdout() string
+	GetStderr() string
 }
