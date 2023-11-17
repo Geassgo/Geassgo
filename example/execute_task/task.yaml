@@ -1,0 +1,7 @@
+name: "name"
+shell: "ps aux"
+win_shell: "tasklist"
+file:
+  content: "asdasdasdasdasdqwieqwieopi"
+  dest: "C:\\dev\\go\\src\\Geassgo\\example\\execute_task\\task.log"
+  action: file
