@@ -1,27 +1,32 @@
 - name: step2 enable
-  win_shell: mkdir {{.values.dir}}\out\{{.values.CUSA_ENV}}
+  shell: mkdir {{.values.dir}}/out/{{.values.CUSA_ENV}}
+  win_shell: mkdir {{.values.dir}}/out/{{.values.CUSA_ENV}}
   ignore_error: true
 
 - name: step1
-  win_shell: 'echo "step1" > {{.values.dir}}\out\{{.values.name}}.yaml'
+  shell: 'echo "step1" > {{.values.dir}}/out/{{.values.name}}.yaml'
+  win_shell: 'echo "step1" > {{.values.dir}}/out/{{.values.name}}.yaml'
 
 - name: step3 register
+  shell: ps aux |grep idea
   win_shell: tasklist |findstr idea
   register: tasklist
   ignore_error: true
 
 - name: step4 register
+  shell: ps aux
   win_shell: tasklist
   register: tasklist
   when: '{{eqs .register.tasklist ""}}'
 
 - name: step3.5 template
   template:
-    src: '{{.values.dir}}\otnm-manager.yaml'
-    dest: '{{.values.dir}}\out\manager_{{.values.service.index}}.yaml'
+    src: '{{.values.dir}}/otnm-manager.yaml'
+    dest: '{{.values.dir}}/out/manager_{{.values.service.index}}.yaml'
 
 - name: step4 withItem
-  win_shell: echo {{.item}} >> {{.values.dir}}\out\{{.values.name}}.yaml
+  shell: echo {{.item}} >> {{.values.dir}}/out/{{.values.name}}.yaml
+  win_shell: echo {{.item}} >> {{.values.dir}}/out/{{.values.name}}.yaml
   with_item:
     - "i1"
     - "i2"

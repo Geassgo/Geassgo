@@ -8,17 +8,17 @@
     - name: save pwd
       file:
         content: '{{.register.pwd}}'
-        dest: '{{.values.dir}}\out\pwd.log'
+        dest: '{{.values.dir}}/out/pwd.log'
         action: file
 
 
 - name: claim
-  include: '{{.values.dir}}\include_task.yaml'
+  include: '{{.values.dir}}/include_task.yaml'
 
 - name: "name"
   file:
     content: "{{.item}}"
-    dest: '{{.values.dir}}\out\{{.values.name}}_{{.itemIndex}}.yaml'
+    dest: '{{.values.dir}}/out/{{.values.name}}_{{.itemIndex}}.yaml'
     action: file
   with_item:
     - "i1"
