@@ -1,0 +1,30 @@
+- name: step2 enable
+  win_shell: mkdir -p {{.values.dir}}\out\{{.values.CUSA_ENV}}
+  ignore_error: true
+
+- name: step1
+  win_shell: 'echo "step1" > {{.values.dir}}\out\{{.values.name}}.yaml'
+
+- name: step3 register
+  win_shell: tasklist |findstr goland
+  register: tasklist
+  ignore_error: true
+
+- name: step4 register
+  win_shell: tasklist
+  register: tasklist
+  when: '{{eqs .register.tasklist ""}}'
+
+- name: step3.5 template
+  template:
+    src: 'C:\dev\go\src\Geassgo\example\execute_claim\otnm-manager.yaml'
+    dest: '{{.values.dir}}\out\manager_{{.values.service.index}}.yaml'
+
+- name: step4 withItem
+  win_shell: echo {{.item}} >> {{.values.dir}}\out\{{.values.name}}.yaml
+  with_item:
+    - "i1"
+    - "i2"
+    - "i3"
+    - "i4"
+    - '{{eqs .values.cusa_gray_enable "true"}}'

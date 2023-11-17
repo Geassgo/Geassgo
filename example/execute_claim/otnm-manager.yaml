@@ -1,0 +1,30 @@
+localMode: false
+environment: { { .values.CUSA_ENV } }
+group: default
+
+cusa_service:
+  name: otnm_manager
+  instanceNo: {{.values.service.index}}
+  version: 1.0.1
+  accessible: group
+  grayed: {{.values.cusa_gray_enable}}
+  protocols:
+    ice: {{.values.localIP}}:26103
+    rest: {{.values.localIP}}:26109
+  properties:
+    unmServiceNo: {{.values.service.index}}
+    unmServiceId: MANAGE-{{.values.service.index}}-OtnmManagerServer
+    unmServiceDll: otnm_manager
+    unmInstanceType: Partition
+    unmTraceInfo: 1
+cusa_shared:
+  serviceCenter:
+    address: {{.values.registry.address}}
+
+cusa_references:
+  strategy:
+    loadbalance: Random
+
+cusaclicent:
+  sidecarAddress: sidecar-api:tcp -h {{.values.sidecar}} -p 9202
+
