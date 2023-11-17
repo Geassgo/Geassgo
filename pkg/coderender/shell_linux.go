@@ -3,6 +3,7 @@
 package coderender
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 )
