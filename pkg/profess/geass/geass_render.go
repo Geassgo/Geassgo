@@ -12,7 +12,6 @@
 package geass
 
 import (
-	"encoding/json"
 	"github.com/lengpucheng/Geassgo/pkg/coderender"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
 	"gopkg.in/yaml.v3"
@@ -32,11 +31,11 @@ func RenderStr(ctx contract.Context, str string) (string, error) {
 // ctx 上下文变量
 // obj 对象 渲染后将最终保存在此
 func RenderObject4Yaml(ctx contract.Context, obj any) error {
-	yml, err := yaml.Marshal(obj)
+	str, err := RenderObject4YamlStr(ctx, obj)
 	if err != nil {
 		return err
 	}
-	return yaml.Unmarshal(yml, &obj)
+	return yaml.Unmarshal([]byte(str), obj)
 }
 
 // RenderObject4YamlStr template渲染对象使用 使用yaml作为中间媒介
@@ -50,13 +49,21 @@ func RenderObject4YamlStr(ctx contract.Context, obj any) (string, error) {
 	return RenderStr(ctx, string(yml))
 }
 
-// TransObject4Json 转换对象 使用json方案
+// TransObject4Yaml 转换对象 使用yaml方案
 // target 转换后的目标对象
 // obj 转换前的对象
-func TransObject4Json(target, object any) error {
-	marshal, err := json.Marshal(object)
-	if err != nil {
-		return err
+func TransObject4Yaml(target, object any) error {
+	var marshal []byte
+	if str, ok := object.(string); ok {
+		marshal = []byte(str)
+	} else if data, ok := object.([]byte); ok {
+		marshal = data
+	} else {
+		data, err := yaml.Marshal(object)
+		if err != nil {
+			return err
+		}
+		marshal = data
 	}
-	return json.Unmarshal(marshal, target)
+	return yaml.Unmarshal(marshal, target)
 }

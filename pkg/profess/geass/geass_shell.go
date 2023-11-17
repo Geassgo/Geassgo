@@ -20,7 +20,7 @@ import (
 )
 
 func init() {
-	registerGeass(Shell, &geassShell{})
+	RegisterGeass(Shell, &geassShell{})
 }
 
 const Shell = "shell"
@@ -28,7 +28,7 @@ const Shell = "shell"
 type geassShell struct{}
 
 func (g *geassShell) Execute(ctx contract.Context, val any) error {
-	shell, ok := val.(contract.Shell)
+	shell, ok := val.(*contract.Shell)
 	if !ok {
 		return geasserr.ModuleValueNotSupport.New(val)
 	}
@@ -54,5 +54,5 @@ func (g *geassShell) OverallRender() bool {
 }
 
 func (g *geassShell) OverloadRender() (bool, any) {
-	return false, nil
+	return true, &contract.Shell{}
 }

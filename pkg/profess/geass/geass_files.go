@@ -20,7 +20,7 @@ import (
 )
 
 func init() {
-	registerGeass(Files, &geassFiles{})
+	RegisterGeass(Files, &geassFiles{})
 }
 
 const Files = "file"

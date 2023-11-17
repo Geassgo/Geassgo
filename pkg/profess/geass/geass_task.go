@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	registerGeass(Task, &geassTask{})
+	RegisterGeass(Task, &geassTask{})
 }
 
 const Task = "task"
@@ -31,7 +31,7 @@ func (g *geassTask) Execute(ctx contract.Context, val any) error {
 			return Execute(ctx, k, v)
 		}
 	}
-	return Execute(ctx, Shell, task.Shell)
+	return Execute(ctx, Shell, &task.Shell)
 }
 
 func (g *geassTask) OverallRender() bool {

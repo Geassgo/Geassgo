@@ -19,7 +19,7 @@ import (
 )
 
 func init() {
-	registerGeass(Template, &executorTemplate{})
+	RegisterGeass(Template, &executorTemplate{})
 }
 
 const Template = "template"
