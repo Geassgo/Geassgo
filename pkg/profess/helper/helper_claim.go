@@ -32,7 +32,9 @@ type claimHelper struct{}
 
 func (c *claimHelper) Execute(ctx contract.Context, val any) error {
 	claim := val.(*contract.Claim)
-	slog.Info("********Task:", "name", claim.Name)
+	if ctx.GetItemIndex() < 0 {
+		slog.Info("********Task:", "name", claim.Name)
+	}
 	if !claim.IsWhen(ctx.GetVariable()) {
 		slog.Info("skipping")
 		return nil
@@ -49,8 +51,7 @@ func (c *claimHelper) Execute(ctx contract.Context, val any) error {
 	} else if claim.Tasks != nil {
 		err = c.withTasks(ctx, claim)
 	} else {
-		claim.Task.Mod = claim.Mod // 转移MOD
-		err = geass.Execute(ctx, geass.Task, claim.Task)
+		err = c.withGeass(ctx, claim)
 	}
 
 	// 错误处理
@@ -72,10 +73,22 @@ func (c *claimHelper) OverloadRender() (bool, any) {
 	return false, nil
 }
 
+func (c *claimHelper) withGeass(ctx contract.Context, claim *contract.Claim) error {
+	claim.Task.Mod = claim.Mod // 转移MOD
+	if err := geass.Execute(ctx, geass.Task, claim.Task); err != nil {
+		return err
+	}
+	slog.Info("Ok")
+	return nil
+}
+
 // 对嵌套claims的执行
 func (c *claimHelper) withTasks(ctx contract.Context, claim *contract.Claim) error {
+	slog.Info(">>>>>>>>", "tasks", len(claim.Tasks))
 	for _, subTask := range claim.Tasks {
-		return geass.Execute(ctx.SubContext(ctx.GetItem(), ctx.GetItemIndex()), Claim, &subTask)
+		if err := geass.Execute(ctx.SubContext(ctx.GetItem(), ctx.GetItemIndex()), Claim, &subTask); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -83,6 +96,7 @@ func (c *claimHelper) withTasks(ctx contract.Context, claim *contract.Claim) err
 // 对导入claims
 func (c *claimHelper) withInclude(ctx contract.Context, claim *contract.Claim) error {
 	include, err := geass.RenderStr(ctx, claim.Include)
+	slog.Info(">>>>>>>>", "include", include)
 	if err != nil {
 		return err
 	}
@@ -91,8 +105,10 @@ func (c *claimHelper) withInclude(ctx contract.Context, claim *contract.Claim) e
 
 // 对 roles的执行
 func (c *claimHelper) withRoles(ctx contract.Context, claim *contract.Claim) error {
+	slog.Info(">>>>>>>>", "roles", len(claim.Roles))
 	for _, role := range claim.Roles {
 		role, err := geass.RenderStr(ctx, role)
+		slog.Info(">>>>>>>>", "role", role, "name", claim.Name)
 		if err != nil {
 			return err
 		}
@@ -105,7 +121,9 @@ func (c *claimHelper) withRoles(ctx contract.Context, claim *contract.Claim) err
 
 // 对withItem的执行
 func (c *claimHelper) withItem(ctx contract.Context, claim *contract.Claim) error {
+	slog.Info(">>>>>>>>", "withItems", len(claim.WithItem))
 	for index, item := range claim.WithItem {
+		slog.Info(">>>>>>>>", "item", index, "name", claim.Name)
 		rItem, err := geass.RenderStr(ctx, item)
 		if err != nil {
 			return err
@@ -129,7 +147,6 @@ func (c *claimHelper) withError(err error, ctx contract.Context, claim *contract
 		slog.Error("Error.....", "error", err.Error(), "stderr", ctx.GetStderr())
 		return err
 	}
-	slog.Info("Ok")
 	return nil
 }
 
