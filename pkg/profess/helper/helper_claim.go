@@ -82,12 +82,20 @@ func (c *claimHelper) withTasks(ctx contract.Context, claim *contract.Claim) err
 
 // 对导入claims
 func (c *claimHelper) withInclude(ctx contract.Context, claim *contract.Claim) error {
-	return LoadAndExecute4File(ctx, claim.Include)
+	include, err := geass.RenderStr(ctx, claim.Include)
+	if err != nil {
+		return err
+	}
+	return LoadAndExecute4File(ctx, include)
 }
 
 // 对 roles的执行
 func (c *claimHelper) withRoles(ctx contract.Context, claim *contract.Claim) error {
 	for _, role := range claim.Roles {
+		role, err := geass.RenderStr(ctx, role)
+		if err != nil {
+			return err
+		}
 		if err := LoadAndExecute4File(ctx, filepath.Join(role, "main.yaml")); err != nil {
 			return err
 		}
