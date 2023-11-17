@@ -1,5 +1,5 @@
 localMode: false
-environment: { { .values.CUSA_ENV } }
+environment: {{ .values.CUSA_ENV }}
 group: default
 
 cusa_service:

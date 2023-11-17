@@ -1,5 +1,5 @@
 - name: claim
-  include: C:\dev\go\src\Geassgo\example\execute_claim\include_task.yaml
+  include: '{{.values.dir}}\include_task.yaml'
 
 - name: "name"
   file:

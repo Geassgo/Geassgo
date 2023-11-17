@@ -1,5 +1,5 @@
 - name: step2 enable
-  win_shell: mkdir -p {{.values.dir}}\out\{{.values.CUSA_ENV}}
+  win_shell: mkdir {{.values.dir}}\out\{{.values.CUSA_ENV}}
   ignore_error: true
 
 - name: step1
@@ -17,7 +17,7 @@
 
 - name: step3.5 template
   template:
-    src: 'C:\dev\go\src\Geassgo\example\execute_claim\otnm-manager.yaml'
+    src: '{{.values.dir}}\otnm-manager.yaml'
     dest: '{{.values.dir}}\out\manager_{{.values.service.index}}.yaml'
 
 - name: step4 withItem
