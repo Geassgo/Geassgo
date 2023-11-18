@@ -86,7 +86,7 @@ func (c *claimHelper) withGeass(ctx contract.Context, claim *contract.Claim) err
 func (c *claimHelper) withTasks(ctx contract.Context, claim *contract.Claim) error {
 	slog.Info(">>>>>>>>", "tasks", len(claim.Tasks))
 	for _, subTask := range claim.Tasks {
-		if err := geass.Execute(ctx.SubContext(ctx.GetItem(), ctx.GetItemIndex()), Claim, &subTask); err != nil {
+		if err := geass.Execute(ctx.SubContext(ctx), Claim, &subTask); err != nil {
 			return err
 		}
 	}
@@ -130,7 +130,7 @@ func (c *claimHelper) withItem(ctx contract.Context, claim *contract.Claim) erro
 		}
 		var itemClaim = *claim
 		itemClaim.WithItem = nil
-		if err = geass.Execute(ctx.SubContext(rItem, index), Claim, &itemClaim); err != nil {
+		if err = geass.Execute(ctx.SubContext(geass.NewRuntime(ctx.GetLocation(), index, rItem)), Claim, &itemClaim); err != nil {
 			return err
 		}
 	}
@@ -152,7 +152,8 @@ func (c *claimHelper) withError(err error, ctx contract.Context, claim *contract
 
 // LoadAndExecute4File 从文件加载并执行Claim
 func LoadAndExecute4File(ctx contract.Context, path string) error {
-	file, err := os.ReadFile(coderender.AbsPath(ctx.GenLocation(), path))
+	absPath := coderender.AbsPath(ctx.GetLocation(), path)
+	file, err := os.ReadFile(absPath)
 	if err != nil {
 		return err
 	}
@@ -170,7 +171,7 @@ func LoadAndExecute4File(ctx contract.Context, path string) error {
 			return err
 		}
 		for _, inClaimItem := range *inClaim {
-			if err = geass.Execute(ctx.SubContext(ctx.GetItem(), ctx.GetItemIndex()), Claim, &inClaimItem); err != nil {
+			if err = geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Dir(absPath), ctx.GetItemIndex(), ctx.GetItem())), Claim, &inClaimItem); err != nil {
 				return err
 			}
 		}
@@ -181,7 +182,7 @@ func LoadAndExecute4File(ctx contract.Context, path string) error {
 		if err = yaml.Unmarshal(file, inClaim); err != nil {
 			return err
 		}
-		return geass.Execute(ctx, Claim, inClaim)
+		return geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Dir(absPath), ctx.GetItemIndex(), ctx.GetItem())), Claim, inClaim)
 	}
 	return nil
 }

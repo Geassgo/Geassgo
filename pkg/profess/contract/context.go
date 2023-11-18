@@ -13,15 +13,21 @@ package contract
 
 import "context"
 
+// Context 执行上下文对象
 type Context interface {
 	context.Context
+	Runtime
 	GetVariable() *Variable
-	GetItem() any
-	GetItemIndex() int
-	GenLocation() string
-	SubContext(item any, index int) Context
+	SubContext(runtime Runtime) Context
 	SetStdout(stdout string)
 	SetStderr(stderr string)
 	GetStdout() string
 	GetStderr() string
+}
+
+// Runtime geass 运行时环境
+type Runtime interface {
+	GetItem() any
+	GetItemIndex() int
+	GetLocation() string
 }

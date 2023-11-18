@@ -22,16 +22,16 @@ type Context struct {
 	subContext []contract.Context
 }
 
-func NewContext(ctx context.Context, variable *contract.Variable) *Context {
+func NewContext(ctx context.Context, runtime contract.Runtime, variable *contract.Variable) *Context {
 	variable.Check()
 	return &Context{
-		Context:    geass.NewContext(ctx, variable),
+		Context:    geass.NewContext(ctx, runtime, variable),
 		subContext: make([]contract.Context, 0),
 	}
 }
 
-func (c *Context) SubContext(item any, index int) contract.Context {
-	ctx := &Context{Context: c.Context.SubContext(item, index)}
+func (c *Context) SubContext(runtime contract.Runtime) contract.Context {
+	ctx := &Context{Context: c.Context.SubContext(runtime)}
 	c.subContext = append(c.subContext, ctx)
 	return ctx
 }

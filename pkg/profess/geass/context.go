@@ -18,37 +18,26 @@ import (
 
 type Context struct {
 	context.Context
-	location  string
-	variable  *contract.Variable
-	item      any
-	itemIndex int
-	stderr    string
-	stdout    string
+	contract.Runtime
+	variable *contract.Variable
+	stderr   string
+	stdout   string
 }
 
 func Background() *Context {
-	return NewContext(context.Background(), new(contract.Variable).Check())
+	return NewContext(context.Background(), DefaultRuntime(), new(contract.Variable).Check())
 }
 
-func NewContext(ctx context.Context, variable *contract.Variable) *Context {
+func NewContext(ctx context.Context, runtime contract.Runtime, variable *contract.Variable) *Context {
 	return &Context{
-		Context:   ctx,
-		variable:  variable,
-		item:      nil,
-		itemIndex: -1,
+		Context:  ctx,
+		Runtime:  runtime,
+		variable: variable,
 	}
 }
 
 func (c *Context) GetVariable() *contract.Variable {
 	return c.variable
-}
-
-func (c *Context) GetItem() any {
-	return c.item
-}
-
-func (c *Context) GetItemIndex() int {
-	return c.itemIndex
 }
 
 func (c *Context) SetStdout(stdout string) {
@@ -67,15 +56,10 @@ func (c *Context) GetStderr() string {
 	return c.stderr
 }
 
-func (c *Context) GenLocation() string {
-	return c.location
-}
-
-func (c *Context) SubContext(item any, index int) contract.Context {
+func (c *Context) SubContext(runtime contract.Runtime) contract.Context {
 	return &Context{
-		Context:   c.Context,
-		variable:  c.variable,
-		item:      item,
-		itemIndex: index,
+		Context:  c.Context,
+		variable: c.variable,
+		Runtime:  runtime,
 	}
 }

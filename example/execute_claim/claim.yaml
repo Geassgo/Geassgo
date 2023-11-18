@@ -13,7 +13,7 @@
 
 
 - name: claim
-  include: '{{.values.dir}}/include_task.yaml'
+  include: include_task.yaml
 
 - name: "name"
   file:

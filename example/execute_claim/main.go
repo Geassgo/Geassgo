@@ -14,6 +14,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
+	"github.com/lengpucheng/Geassgo/pkg/profess/geass"
 	"github.com/lengpucheng/Geassgo/pkg/profess/helper"
 	"gopkg.in/yaml.v3"
 	"os"
@@ -29,7 +30,7 @@ func test() {
 	if err = yaml.Unmarshal(file, &values.Values); err != nil {
 		panic(err)
 	}
-	ctx := helper.NewContext(context.Background(), values)
+	ctx := helper.NewContext(context.Background(), geass.DefaultRuntime(), values)
 	if err = helper.LoadAndExecute4File(ctx, "example/execute_claim/claim.yaml"); err != nil {
 		panic(err)
 	}
