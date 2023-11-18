@@ -16,6 +16,7 @@ import (
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
 	"github.com/lengpucheng/Geassgo/pkg/profess/mod"
 	"os"
+	"path/filepath"
 )
 
 func init() {
@@ -28,7 +29,7 @@ type executorTemplate struct{}
 
 func (e *executorTemplate) Execute(ctx contract.Context, val any) error {
 	tem := val.(*mod.Template)
-	files, err := os.ReadFile(tem.Src)
+	files, err := os.ReadFile(coderender.AbsPath(filepath.Join(ctx.GetLocation(), "templates/"), tem.Src))
 	if err != nil {
 		return err
 	}

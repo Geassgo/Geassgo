@@ -16,9 +16,11 @@ import (
 	"path/filepath"
 )
 
-// AbsPath 返回绝对路径
+// AbsPath 返回绝对路径或拼接路径
+// location 当前位置 若location非以/或\结尾将去掉最后一个 /或\后的内容
+// path 待判断路径
 // 若 path 为绝对路径则返回本身
-// 若 path 非绝对路径 则拼接 location 和 path
+// 若 path 非绝对路径 则拼接 location的文件夹路径 和 path
 func AbsPath(location, path string) string {
 	if filepath.IsAbs(path) {
 		return path
