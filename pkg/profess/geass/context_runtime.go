@@ -11,8 +11,6 @@
 
 package geass
 
-import "os"
-
 type Runtime struct {
 	location  string // 运行时位置
 	item      any    // 运行时迭代器
@@ -26,9 +24,9 @@ func DefaultRuntime() *Runtime {
 
 // NewRuntime 初始化一个geass执行时环境
 func NewRuntime(location string, index int, item any) *Runtime {
-	if size := len(location); size > 0 && location[size-1] != '/' && location[size-1] != '\\' {
-		location = location + string(os.PathSeparator)
-	}
+	//if size := len(location); size > 0 && location[size-1] != '/' && location[size-1] != '\\' {
+	//	location = location + string(os.PathSeparator)
+	//}
 	return &Runtime{
 		location:  location,
 		item:      item,

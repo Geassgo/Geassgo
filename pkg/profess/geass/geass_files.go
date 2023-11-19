@@ -15,7 +15,7 @@ import (
 	"errors"
 	"github.com/lengpucheng/Geassgo/pkg/coderender"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
-	"github.com/lengpucheng/Geassgo/pkg/profess/mod"
+	"github.com/lengpucheng/Geassgo/pkg/profess/contract/mod"
 	"os"
 )
 

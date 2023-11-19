@@ -23,14 +23,14 @@ import (
 )
 
 func init() {
-	geass.RegisterGeass(Claim, &claimHelper{})
+	geass.RegisterGeass(Claim, &helperClaim{})
 }
 
 const Claim = "_CLAIM_HELPER_"
 
-type claimHelper struct{}
+type helperClaim struct{}
 
-func (c *claimHelper) Execute(ctx contract.Context, val any) error {
+func (c *helperClaim) Execute(ctx contract.Context, val any) error {
 	claim := val.(*contract.Claim)
 	if ctx.GetItemIndex() < 0 {
 		slog.Info("********Task:", "name", claim.Name)
@@ -65,15 +65,15 @@ func (c *claimHelper) Execute(ctx contract.Context, val any) error {
 	return err
 }
 
-func (c *claimHelper) OverallRender() bool {
+func (c *helperClaim) OverallRender() bool {
 	return false
 }
 
-func (c *claimHelper) OverloadRender() (bool, any) {
+func (c *helperClaim) OverloadRender() (bool, any) {
 	return false, nil
 }
 
-func (c *claimHelper) withGeass(ctx contract.Context, claim *contract.Claim) error {
+func (c *helperClaim) withGeass(ctx contract.Context, claim *contract.Claim) error {
 	claim.Task.Mod = claim.Mod // 转移MOD
 	if err := geass.Execute(ctx, geass.Task, claim.Task); err != nil {
 		return err
@@ -83,7 +83,7 @@ func (c *claimHelper) withGeass(ctx contract.Context, claim *contract.Claim) err
 }
 
 // 对嵌套claims的执行
-func (c *claimHelper) withTasks(ctx contract.Context, claim *contract.Claim) error {
+func (c *helperClaim) withTasks(ctx contract.Context, claim *contract.Claim) error {
 	slog.Info(">>>>>>>>", "tasks", len(claim.Tasks))
 	for _, subTask := range claim.Tasks {
 		if err := geass.Execute(ctx.SubContext(ctx), Claim, &subTask); err != nil {
@@ -94,7 +94,7 @@ func (c *claimHelper) withTasks(ctx contract.Context, claim *contract.Claim) err
 }
 
 // 对导入claims
-func (c *claimHelper) withInclude(ctx contract.Context, claim *contract.Claim) error {
+func (c *helperClaim) withInclude(ctx contract.Context, claim *contract.Claim) error {
 	include, err := geass.RenderStr(ctx, claim.Include)
 	slog.Info(">>>>>>>>", "include", include)
 	if err != nil {
@@ -104,7 +104,7 @@ func (c *claimHelper) withInclude(ctx contract.Context, claim *contract.Claim) e
 }
 
 // 对 roles的执行
-func (c *claimHelper) withRoles(ctx contract.Context, claim *contract.Claim) error {
+func (c *helperClaim) withRoles(ctx contract.Context, claim *contract.Claim) error {
 	slog.Info(">>>>>>>>", "roles", len(claim.Roles))
 	for _, role := range claim.Roles {
 		role, err := geass.RenderStr(ctx, role)
@@ -112,7 +112,7 @@ func (c *claimHelper) withRoles(ctx contract.Context, claim *contract.Claim) err
 		if err != nil {
 			return err
 		}
-		if err := LoadAndExecute4File(ctx, filepath.Join(role, "main.yaml")); err != nil {
+		if err := LoadAndExecute4File(ctx, filepath.Join(ctx.GetLocation(), "roles", role, "main.yaml")); err != nil {
 			return err
 		}
 	}
@@ -120,7 +120,7 @@ func (c *claimHelper) withRoles(ctx contract.Context, claim *contract.Claim) err
 }
 
 // 对withItem的执行
-func (c *claimHelper) withItem(ctx contract.Context, claim *contract.Claim) error {
+func (c *helperClaim) withItem(ctx contract.Context, claim *contract.Claim) error {
 	slog.Info(">>>>>>>>", "withItems", len(claim.WithItem))
 	for index, item := range claim.WithItem {
 		slog.Info(">>>>>>>>", "item", index, "name", claim.Name)
@@ -138,7 +138,7 @@ func (c *claimHelper) withItem(ctx contract.Context, claim *contract.Claim) erro
 }
 
 // 错误处理
-func (c *claimHelper) withError(err error, ctx contract.Context, claim *contract.Claim) error {
+func (c *helperClaim) withError(err error, ctx contract.Context, claim *contract.Claim) error {
 	if err != nil {
 		if claim.IgnoreError {
 			slog.Warn("Ignore.....", "error", err.Error(), "stderr", ctx.GetStderr())

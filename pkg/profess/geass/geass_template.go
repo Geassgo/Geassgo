@@ -14,22 +14,22 @@ package geass
 import (
 	"github.com/lengpucheng/Geassgo/pkg/coderender"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
-	"github.com/lengpucheng/Geassgo/pkg/profess/mod"
+	"github.com/lengpucheng/Geassgo/pkg/profess/contract/mod"
 	"os"
 	"path/filepath"
 )
 
 func init() {
-	RegisterGeass(Template, &executorTemplate{})
+	RegisterGeass(Template, &geassTemplate{})
 }
 
 const Template = "template"
 
-type executorTemplate struct{}
+type geassTemplate struct{}
 
-func (e *executorTemplate) Execute(ctx contract.Context, val any) error {
+func (e *geassTemplate) Execute(ctx contract.Context, val any) error {
 	tem := val.(*mod.Template)
-	files, err := os.ReadFile(coderender.AbsPath(filepath.Join(ctx.GetLocation(), "templates/"), tem.Src))
+	files, err := os.ReadFile(coderender.AbsPath(filepath.Join(ctx.GetLocation(), "templates"), tem.Src))
 	if err != nil {
 		return err
 	}
@@ -37,10 +37,10 @@ func (e *executorTemplate) Execute(ctx contract.Context, val any) error {
 	return coderender.WriteFile(tem.Dest, []byte(render), os.ModePerm|os.ModeAppend)
 }
 
-func (e *executorTemplate) OverallRender() bool {
+func (e *geassTemplate) OverallRender() bool {
 	return true
 }
 
-func (e *executorTemplate) OverloadRender() (bool, any) {
+func (e *geassTemplate) OverloadRender() (bool, any) {
 	return true, &mod.Template{}
 }

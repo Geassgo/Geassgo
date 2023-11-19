@@ -25,7 +25,7 @@ func AbsPath(location, path string) string {
 	if filepath.IsAbs(path) {
 		return path
 	}
-	return filepath.Join(filepath.Dir(location), path)
+	return filepath.Join(location, path)
 }
 
 // WriteFile
