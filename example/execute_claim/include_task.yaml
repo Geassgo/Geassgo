@@ -21,7 +21,7 @@
 
 - name: step3.5 template
   template:
-    src: '{{.values.dir}}/otnm-manager.yaml'
+    src: 'otnm-manager.yaml'
     dest: '{{.values.dir}}/out/manager_{{.values.service.index}}.yaml'
 
 - name: step4 withItem

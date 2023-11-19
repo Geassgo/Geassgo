@@ -30,7 +30,7 @@ const Claim = "_CLAIM_HELPER_"
 
 type helperClaim struct{}
 
-func (c *helperClaim) Execute(ctx contract.Context, val any) error {
+func (h *helperClaim) Execute(ctx contract.Context, val any) error {
 	claim := val.(*contract.Claim)
 	if ctx.GetItemIndex() < 0 {
 		slog.Info("********Task:", "name", claim.Name)
@@ -43,19 +43,19 @@ func (c *helperClaim) Execute(ctx contract.Context, val any) error {
 
 	// 执行
 	if claim.WithItem != nil {
-		err = c.withItem(ctx, claim)
+		err = h.withItem(ctx, claim)
 	} else if claim.Include != "" {
-		err = c.withInclude(ctx, claim)
+		err = h.withInclude(ctx, claim)
 	} else if claim.Roles != nil {
-		err = c.withRoles(ctx, claim)
+		err = h.withRoles(ctx, claim)
 	} else if claim.Tasks != nil {
-		err = c.withTasks(ctx, claim)
+		err = h.withTasks(ctx, claim)
 	} else {
-		err = c.withGeass(ctx, claim)
+		err = h.withGeass(ctx, claim)
 	}
 
 	// 错误处理
-	if err = c.withError(err, ctx, claim); err != nil {
+	if err = h.withError(err, ctx, claim); err != nil {
 		return err
 	}
 	// 注册变量
@@ -112,9 +112,12 @@ func (c *helperClaim) withRoles(ctx contract.Context, claim *contract.Claim) err
 		if err != nil {
 			return err
 		}
-		if err := LoadAndExecute4File(ctx, filepath.Join(ctx.GetLocation(), "roles", role, "main.yaml")); err != nil {
+		if err := geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Join(ctx.GetLocation(), "roles", role), -1, nil)), Roles, nil); err != nil {
 			return err
 		}
+		//if err := LoadAndExecute4File(ctx, filepath.Join(ctx.GetLocation(), "roles", role, "main.yaml")); err != nil {
+		//	return err
+		//}
 	}
 	return nil
 }

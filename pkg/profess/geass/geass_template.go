@@ -27,9 +27,9 @@ const Template = "template"
 
 type geassTemplate struct{}
 
-func (e *geassTemplate) Execute(ctx contract.Context, val any) error {
+func (g *geassTemplate) Execute(ctx contract.Context, val any) error {
 	tem := val.(*mod.Template)
-	files, err := os.ReadFile(coderender.AbsPath(filepath.Join(ctx.GetLocation(), "templates"), tem.Src))
+	files, err := os.ReadFile(coderender.AbsPath(filepath.Join(ctx.GetLocation(), "../templates"), tem.Src))
 	if err != nil {
 		return err
 	}
@@ -37,10 +37,10 @@ func (e *geassTemplate) Execute(ctx contract.Context, val any) error {
 	return coderender.WriteFile(tem.Dest, []byte(render), os.ModePerm|os.ModeAppend)
 }
 
-func (e *geassTemplate) OverallRender() bool {
+func (g *geassTemplate) OverallRender() bool {
 	return true
 }
 
-func (e *geassTemplate) OverloadRender() (bool, any) {
+func (g *geassTemplate) OverloadRender() (bool, any) {
 	return true, &mod.Template{}
 }
