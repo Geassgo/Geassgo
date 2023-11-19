@@ -37,3 +37,23 @@ func (v *Variable) ToMap() map[string]any {
 		"register": v.Register,
 	}
 }
+
+// DeepCopy 深拷贝
+func (v *Variable) DeepCopy() *Variable {
+	return &Variable{
+		System:   deepCopyMap(v.System),
+		Values:   deepCopyMap(v.Values),
+		Register: deepCopyMap(v.Register),
+	}
+}
+
+func deepCopyMap(src map[string]any) map[string]any {
+	if src == nil {
+		return nil
+	}
+	dest := make(map[string]any)
+	for k, v := range src {
+		dest[k] = v
+	}
+	return dest
+}
