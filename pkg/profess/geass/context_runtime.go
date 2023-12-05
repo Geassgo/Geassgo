@@ -12,23 +12,25 @@
 package geass
 
 type Runtime struct {
-	location  string // 运行时位置
+	rolePath  string // 当前role执行时位置
+	location  string // 当前yaml运行时位置
 	item      any    // 运行时迭代器
 	itemIndex int    // 迭代器位置
 }
 
 // DefaultRuntime 获取一个默认的空runtime
 func DefaultRuntime() *Runtime {
-	return NewRuntime("", -1, nil)
+	return NewRuntime("", "", -1, nil)
 }
 
 // NewRuntime 初始化一个geass执行时环境
-func NewRuntime(location string, index int, item any) *Runtime {
+func NewRuntime(location, rolePath string, index int, item any) *Runtime {
 	//if size := len(location); size > 0 && location[size-1] != '/' && location[size-1] != '\\' {
 	//	location = location + string(os.PathSeparator)
 	//}
 	return &Runtime{
 		location:  location,
+		rolePath:  rolePath,
 		item:      item,
 		itemIndex: index,
 	}
@@ -44,4 +46,8 @@ func (r *Runtime) GetItemIndex() int {
 
 func (r *Runtime) GetLocation() string {
 	return r.location
+}
+
+func (r *Runtime) GetRolePath() string {
+	return r.rolePath
 }

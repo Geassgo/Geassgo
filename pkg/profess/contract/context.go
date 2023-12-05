@@ -27,7 +27,8 @@ type Context interface {
 
 // Runtime geass 运行时环境
 type Runtime interface {
-	GetItem() any
-	GetItemIndex() int
-	GetLocation() string
+	GetItem() any        // 获取当前的迭代
+	GetItemIndex() int   // 获取当前的迭代编号
+	GetLocation() string // 获取当前的yaml执行位置
+	GetRolePath() string // 获取当前的role位置
 }

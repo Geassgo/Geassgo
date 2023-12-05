@@ -112,7 +112,9 @@ func (c *helperClaim) withRoles(ctx contract.Context, claim *contract.Claim) err
 		if err != nil {
 			return err
 		}
-		if err := geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Join(ctx.GetLocation(), "roles", role), -1, nil)), Roles, nil); err != nil {
+		// 拼接roles目录
+		rolePath := filepath.Join(ctx.GetLocation(), "roles", role)
+		if err := geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Join(rolePath, "main.yaml"), rolePath, -1, nil)), Roles, nil); err != nil {
 			return err
 		}
 		//if err := LoadAndExecute4File(ctx, filepath.Join(ctx.GetLocation(), "roles", role, "main.yaml")); err != nil {
@@ -133,7 +135,7 @@ func (c *helperClaim) withItem(ctx contract.Context, claim *contract.Claim) erro
 		}
 		var itemClaim = *claim
 		itemClaim.WithItem = nil
-		if err = geass.Execute(ctx.SubContext(geass.NewRuntime(ctx.GetLocation(), index, rItem)), Claim, &itemClaim); err != nil {
+		if err = geass.Execute(ctx.SubContext(geass.NewRuntime(ctx.GetLocation(), ctx.GetRolePath(), index, rItem)), Claim, &itemClaim); err != nil {
 			return err
 		}
 	}
@@ -155,7 +157,7 @@ func (c *helperClaim) withError(err error, ctx contract.Context, claim *contract
 
 // LoadAndExecute4File 从文件加载并执行Claim
 func LoadAndExecute4File(ctx contract.Context, path string) error {
-	absPath := coderender.AbsPath(ctx.GetLocation(), path)
+	absPath := coderender.AbsPath(filepath.Dir(ctx.GetLocation()), path)
 	file, err := os.ReadFile(absPath)
 	if err != nil {
 		return err
@@ -174,7 +176,7 @@ func LoadAndExecute4File(ctx contract.Context, path string) error {
 			return err
 		}
 		for _, inClaimItem := range *inClaim {
-			if err = geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Dir(absPath), ctx.GetItemIndex(), ctx.GetItem())), Claim, &inClaimItem); err != nil {
+			if err = geass.Execute(ctx.SubContext(geass.NewRuntime(absPath, ctx.GetRolePath(), ctx.GetItemIndex(), ctx.GetItem())), Claim, &inClaimItem); err != nil {
 				return err
 			}
 		}
@@ -185,7 +187,7 @@ func LoadAndExecute4File(ctx contract.Context, path string) error {
 		if err = yaml.Unmarshal(file, inClaim); err != nil {
 			return err
 		}
-		return geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Dir(absPath), ctx.GetItemIndex(), ctx.GetItem())), Claim, inClaim)
+		return geass.Execute(ctx.SubContext(geass.NewRuntime(absPath, ctx.GetRolePath(), ctx.GetItemIndex(), ctx.GetItem())), Claim, inClaim)
 	}
 	return nil
 }

@@ -29,7 +29,7 @@ type geassTemplate struct{}
 
 func (g *geassTemplate) Execute(ctx contract.Context, val any) error {
 	tem := val.(*mod.Template)
-	files, err := os.ReadFile(coderender.AbsPath(filepath.Join(ctx.GetLocation(), "../templates"), tem.Src))
+	files, err := os.ReadFile(coderender.AbsPath(g.GetTemplateDirPath(ctx), tem.Src))
 	if err != nil {
 		return err
 	}
@@ -43,4 +43,11 @@ func (g *geassTemplate) OverallRender() bool {
 
 func (g *geassTemplate) OverloadRender() (bool, any) {
 	return true, &mod.Template{}
+}
+
+func (g *geassTemplate) GetTemplateDirPath(ctx contract.Context) string {
+	if ctx.GetRolePath() != "" {
+		return filepath.Join(ctx.GetRolePath(), "templates")
+	}
+	return filepath.Dir(ctx.GetLocation())
 }
