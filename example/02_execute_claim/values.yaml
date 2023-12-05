@@ -1,6 +1,6 @@
 enable: true
 name: claim-test
-dir: example/execute_claim
+dir: example/02_execute_claim
 installPath: "/opt/unm2000"
 CUSA_ENV: defaults
 cusa_gray_enable: false

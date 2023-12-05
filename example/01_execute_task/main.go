@@ -10,7 +10,7 @@ import (
 )
 
 func test() {
-	file, err := os.ReadFile("C:\\dev\\go\\src\\Geassgo\\example\\execute_task\\task.yaml")
+	file, err := os.ReadFile("C:\\dev\\go\\src\\Geassgo\\example\\01_execute_task\\task.yaml")
 	if err != nil {
 		panic(err)
 	}
