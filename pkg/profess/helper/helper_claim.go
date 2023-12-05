@@ -113,13 +113,10 @@ func (c *helperClaim) withRoles(ctx contract.Context, claim *contract.Claim) err
 			return err
 		}
 		// 拼接roles目录
-		rolePath := filepath.Join(ctx.GetLocation(), "roles", role)
-		if err := geass.Execute(ctx.SubContext(geass.NewRuntime(filepath.Join(rolePath, "main.yaml"), rolePath, -1, nil)), Roles, nil); err != nil {
+		rolePath := filepath.Join(filepath.Dir(ctx.GetLocation()), "roles", role) + "/"
+		if err := geass.Execute(ctx.SubContext(geass.NewRuntime(rolePath, rolePath, -1, nil)), Roles, nil); err != nil {
 			return err
 		}
-		//if err := LoadAndExecute4File(ctx, filepath.Join(ctx.GetLocation(), "roles", role, "main.yaml")); err != nil {
-		//	return err
-		//}
 	}
 	return nil
 }

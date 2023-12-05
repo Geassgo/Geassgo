@@ -55,10 +55,11 @@ func (r *helperRoles) OverloadRender() (bool, any) {
 	return false, nil
 }
 
+// 加载默认配置
 func (r *helperRoles) loadDefault(ctx contract.Context) (*contract.Variable, error) {
 	variable := ctx.GetVariable().DeepCopy()
 	val := map[string]any{}
-	defValPath := filepath.Join(ctx.GetLocation(), "defaults/main.yaml")
+	defValPath := filepath.Join(ctx.GetRolePath(), "defaults/main.yaml")
 	if _, err := os.Stat(defValPath); os.IsNotExist(err) {
 		return variable, nil
 	}
@@ -69,7 +70,9 @@ func (r *helperRoles) loadDefault(ctx contract.Context) (*contract.Variable, err
 	err = yaml.Unmarshal(file, &val)
 	// 合并val
 	for k, v := range val {
-		variable.Values[k] = v
+		if _, ok := variable.Values[k]; !ok {
+			variable.Values[k] = v
+		}
 	}
 	// TODO 这里日后需要多级渲染
 	return variable, nil
