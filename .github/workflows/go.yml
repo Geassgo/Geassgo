@@ -22,7 +22,7 @@ jobs:
         go-version: '1.18'
 
     - name: mod tidy
-      run: go mod tidy
+      run: go env -w GO111MODULE=on && go mod tidy
     
     - name: Build
       run: go build -o geassgo -v ./cmd/main.go 
