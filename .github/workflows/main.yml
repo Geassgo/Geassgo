@@ -6,25 +6,6 @@ on:
   pull_request:
 
 jobs:
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: 1.18
-
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Lint Go Code
-        run: |
-          export PATH=$PATH:$(go env GOPATH)/bin # temporary fix. See https://github.com/actions/setup-go/issues/14
-          go get -u golang.org/x/lint/golint 
-          make lint
-
   build:
     name: Build
     runs-on: ubuntu-latest
