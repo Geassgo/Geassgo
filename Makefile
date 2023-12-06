@@ -8,4 +8,4 @@ dep:
 
 build: clean dep
 	mkdir -p bin
-	go build -v -o bin/geassgo cmd/main.go
+	GO111MODULE=on go build -v -o bin/geassgo cmd/main.go
