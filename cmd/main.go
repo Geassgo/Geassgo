@@ -14,26 +14,45 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/lengpucheng/Geassgo/pkg/coderender"
 	"github.com/lengpucheng/Geassgo/pkg/profess/helper"
+	"log/slog"
 	"time"
 )
 
 var valuePath string
-var taskPath string
+var targetPath string
+var outputPath string
+var mod string
 
 func init() {
+	flag.StringVar(&mod, "m", "task", "mod  default task\n1. package : package chart use -t dir -o chart.tar.gz\n"+
+		"2. task : execute task use -t task.yaml -v values.yaml\n"+
+		"3. chart : execute chart use -t chart.tar.gz")
+	flag.StringVar(&targetPath, "t", "", "target path")
 	flag.StringVar(&valuePath, "v", "", "values file")
-	flag.StringVar(&taskPath, "t", "", "task file")
+	flag.StringVar(&outputPath, "o", ".", "output path default .")
 }
 
 func main() {
 	flag.Parse()
-	if taskPath == "" {
+	if targetPath == "" {
 		flag.Usage()
 		return
 	}
+	var err error
 	now := time.Now()
-	_, err := helper.RunTask(context.Background(), taskPath, valuePath)
+	switch mod {
+	case "package":
+		err = coderender.Archive(targetPath, outputPath)
+	case "chart":
+		_, err = helper.RunChart(context.Background(), targetPath)
+	case "task":
+		_, err = helper.RunTask(context.Background(), targetPath, valuePath)
+	default:
+		slog.Error("the mod is not support", "mode", mod)
+		return
+	}
 	if err != nil {
 		panic(err)
 	}
