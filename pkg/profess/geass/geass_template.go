@@ -34,6 +34,9 @@ func (g *geassTemplate) Execute(ctx contract.Context, val any) error {
 		return err
 	}
 	render, err := RenderStr(ctx, string(files))
+	if err != nil {
+		return err
+	}
 	return coderender.WriteFile(tem.Dest, []byte(render), os.ModePerm|os.ModeAppend)
 }
 

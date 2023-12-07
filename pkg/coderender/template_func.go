@@ -13,23 +13,43 @@ package coderender
 
 import (
 	"fmt"
+	"github.com/Masterminds/sprig/v3"
 	"reflect"
 	"strings"
 	"text/template"
 )
 
+// FuncMap 核心的模板函数 包含 sprig和default 同helm一致
+func FuncMap() template.FuncMap {
+	funcMap := sprig.FuncMap()
+	templateFunc := DefaultTemplateFunc()
+	for k, v := range templateFunc {
+		funcMap[k] = v
+	}
+	return funcMap
+}
+
+// DefaultTemplateFunc 默认的模板语法 自定义
+// 使用时应该使用 FuncMap
 func DefaultTemplateFunc() template.FuncMap {
 	return map[string]any{
-		"str":     Str,
-		"belong":  Belong,
-		"contain": Contain,
-		"exist":   Exist,
-		"subset":  Subset,
-		"eqs":     Equals,
-		"ands":    Ands,
-		"ors":     Ors,
-		"obj":     Object,
-		"json":    Object,
+		"str":           Str,
+		"belong":        Belong,
+		"contain":       Contain,
+		"exist":         Exist,
+		"subset":        Subset,
+		"eqs":           Equals,
+		"ands":          Ands,
+		"ors":           Ors,
+		"obj":           Object,
+		"json":          Object,
+		"toToml":        toTOML,
+		"toYaml":        toYAML,
+		"fromYaml":      fromYAML,
+		"fromYamlArray": fromYAMLArray,
+		"toJson":        toJSON,
+		"fromJson":      fromJSON,
+		"fromJsonArray": fromJSONArray,
 	}
 }
 

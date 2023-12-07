@@ -27,4 +27,8 @@ cusa_references:
 
 cusaclicent:
   sidecarAddress: sidecar-api:tcp -h {{.values.sidecar}} -p 9202
+middleware:
+  {{- with .values.middleware}}
+  {{- toYaml . | nindent 2}}
+  {{- end}}
 

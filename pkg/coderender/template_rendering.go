@@ -57,7 +57,7 @@ func TemplateBytes(data []byte, left, right string, funcMap map[string]any, para
 		return nil, err
 	}
 	buff := new(bytes.Buffer)
-	buff.Bytes()
+	//buff.Bytes()
 	e := parse.Execute(buff, params)
 	return buff.Bytes(), e
 }

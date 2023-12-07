@@ -31,6 +31,6 @@ func (t *Claim) IsWhen(variable *Variable) bool {
 	if t.When == "" {
 		return true
 	}
-	s, _ := coderender.Template(t.When, "{{", "}}", coderender.DefaultTemplateFunc(), variable.ToMap())
+	s, _ := coderender.Template(t.When, "{{", "}}", coderender.FuncMap(), variable.ToMap())
 	return s == "true"
 }

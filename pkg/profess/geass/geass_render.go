@@ -22,9 +22,9 @@ import (
 // str 带渲染文本
 func RenderStr(ctx contract.Context, str string) (string, error) {
 	if ctx.GetItem() == nil {
-		return coderender.Template(str, "{{", "}}", coderender.DefaultTemplateFunc(), ctx.GetVariable().ToMap())
+		return coderender.Template(str, "{{", "}}", coderender.FuncMap(), ctx.GetVariable().ToMap())
 	}
-	return coderender.Template(str, "{{", "}}", coderender.DefaultTemplateFunc(), ctx.GetVariable().ToMap(), map[string]any{"item": ctx.GetItem(), "itemIndex": ctx.GetItemIndex()})
+	return coderender.Template(str, "{{", "}}", coderender.FuncMap(), ctx.GetVariable().ToMap(), map[string]any{"item": ctx.GetItem(), "itemIndex": ctx.GetItemIndex()})
 }
 
 // RenderObject4Yaml template渲染对象使用 使用yaml作为中间媒介
