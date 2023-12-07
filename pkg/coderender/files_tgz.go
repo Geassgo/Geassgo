@@ -109,8 +109,7 @@ func Archive(src, dst string) (err error) {
 
 	defer tw.Close()
 
-	dir := filepath.Dir(src)
-
+	dir := strings.ReplaceAll(filepath.Dir(src), "\\", "/")
 	// 下面就该开始处理数据了，这里的思路就是递归处理目录及目录下的所有文件和目录
 	// 这里可以自己写个递归来处理，不过 Golang 提供了 filepath.Walk 函数，可以很方便的做这个事情
 	// 直接将这个函数的处理结果返回就行，需要传给它一个源文件或目录，它就可以自己去处理
@@ -132,7 +131,8 @@ func Archive(src, dst string) (err error) {
 		// 这个其实也很简单，回调函数的 fileName 字段给我们返回来的就是完整路径的 log/syslog
 		// strings.TrimPrefix 将 fileName 的最左侧的 / 去掉，
 		// 熟悉 Linux 的都知道为什么要去掉这个
-		hdr.Name = strings.TrimPrefix(fileName, dir+string(filepath.Separator))
+		fileName = strings.ReplaceAll(fileName, "\\", "/")
+		hdr.Name = strings.TrimPrefix(fileName, dir+"/")
 
 		// 写入文件信息
 		if err := tw.WriteHeader(hdr); err != nil {

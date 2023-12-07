@@ -38,3 +38,9 @@ func WriteFile(dest string, data []byte, perm os.FileMode) error {
 	}
 	return os.WriteFile(dest, data, perm)
 }
+
+// IsNotExist 判断文件夹是否不存在
+func IsNotExist(dir string) bool {
+	_, err := os.Stat(dir)
+	return err != nil && os.IsNotExist(err)
+}
