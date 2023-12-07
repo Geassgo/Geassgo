@@ -1,0 +1,29 @@
+- name: 这是chart内部
+  tasks:
+    - name: pwd
+      shell: pwd
+      win_shell: echo %cd%
+      register: pwd
+
+    - name: save pwd
+      file:
+        content: '{{.register.pwd}}'
+        dest: '{{.values.dir}}/out/pwd.log'
+        action: file
+
+
+- name: claim
+  include: include_task.yaml
+
+- name: "name"
+  file:
+    content: "{{.item}}"
+    dest: '{{.values.dir}}/out/{{.values.name}}_{{.itemIndex}}.yaml'
+    action: file
+  with_item:
+    - "i1"
+    - "i2"
+    - "i3"
+    - "i4"
+    - "{{.register.tasklist}}"
+    - '{{eqs .values.cusa_gray_enable "true"}}'

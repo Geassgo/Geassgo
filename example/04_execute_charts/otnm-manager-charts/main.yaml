@@ -1,0 +1,3 @@
+- name: install otnm-manager
+  roles:
+    - otnm-manager

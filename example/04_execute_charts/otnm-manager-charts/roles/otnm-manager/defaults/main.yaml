@@ -1,0 +1,20 @@
+testAbs: 2233445566
+enable: true
+name: claim-test
+dir: C:\dev\go\src\Geassgo\example\04_execute_charts\out
+installPath: "/opt/unm2000"
+CUSA_ENV: defaults
+cusa_gray_enable: false
+service:
+  index: 1
+localIP: "10.171.25.201"
+registry:
+  address: "10.171.25.201"
+sidecar: "10.171.25.201"
+middleware:
+  mysql:
+    host: "10.171.25.201"
+  pas:
+    host: "10.171.25.201"
+  mongo:
+    host: "10.171.25.201"
