@@ -26,7 +26,7 @@ const (
 	FilesDelete    FilesAction = "del"        // 删除
 	FilesMkdir     FilesAction = "dir"        // 创建文件夹
 	FilesFile      FilesAction = "file"       // 创建文件
-	FilesFileAddon FilesAction = "file_add"   // 追加
+	FilesFileAdd   FilesAction = "file_add"   // 追加
 	FilesFileCover FilesAction = "file_cover" // 覆盖
 	FilesCopy      FilesAction = "copy"       // 拷贝
 	FilesMove      FilesAction = "move"       // 移动
