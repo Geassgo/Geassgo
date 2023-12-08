@@ -3,7 +3,7 @@
 @Create 2023/12/7-16:19
 @Author lpc<lengpucheng@qq.com>
 @Program Geassgo
-@Describe files_tgz
+@Describe tar文件解压和压缩
 ----------------------------------------
 @Version 1.0 2023/12/7
 @Memo create this file
@@ -16,7 +16,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
@@ -80,10 +80,9 @@ func UnArchive(src, dest string) error {
 				return err
 			}
 		default: // 其他类型（符号链接、门等）忽略不处理（可选）
-			fmt.Printf("忽略文件类型：%c - %s\n", header.Typeflag, header.Name)
+			slog.Info(fmt.Sprintf("ignoring file types: %c - %s\n", header.Typeflag, header.Name))
 		}
 	}
-	fmt.Println("解压完成！")
 	return nil
 }
 
@@ -109,11 +108,13 @@ func Archive(src, dst string) (err error) {
 
 	defer tw.Close()
 
+	// 替换分隔符统一用 Unix 分隔符, 避免因为用户输入的区别导致后续打包时出现文件夹名称为绝对路径的问题
 	dir := strings.ReplaceAll(filepath.Dir(src), "\\", "/")
+
 	// 下面就该开始处理数据了，这里的思路就是递归处理目录及目录下的所有文件和目录
-	// 这里可以自己写个递归来处理，不过 Golang 提供了 filepath.Walk 函数，可以很方便的做这个事情
+	// 这里可以自己写个递归来处理，但Golang 提供了 filepath.Walk 函数，可以很方便的做这个事情
 	// 直接将这个函数的处理结果返回就行，需要传给它一个源文件或目录，它就可以自己去处理
-	// 我们就只需要去实现我们自己的 打包逻辑即可，不需要再去路径相关的事情
+	// 我们就只需要去实现我们自己的 打包逻辑即可，不需要再去路径相关的事情 但是要同样对路径的分隔符进行统一处理
 	return filepath.Walk(src, func(fileName string, fi os.FileInfo, err error) error {
 		// 因为这个闭包会返回个 error ，所以先要处理一下这个
 		if err != nil {
@@ -127,10 +128,10 @@ func Archive(src, dst string) (err error) {
 		}
 		// 这里需要处理下 hdr 中的 Name，因为默认文件的名字是不带路径的，
 		// 打包之后所有文件就会堆在一起，这样就破坏了原本的目录结果
-		// 例如： 将原本 hdr.Name 的 syslog 替换程 log/syslog
-		// 这个其实也很简单，回调函数的 fileName 字段给我们返回来的就是完整路径的 log/syslog
-		// strings.TrimPrefix 将 fileName 的最左侧的 / 去掉，
-		// 熟悉 Linux 的都知道为什么要去掉这个
+		// 例如： 将原本 hdr.Name 的 manager 替换程 chart/manager
+		// 这个其实也很简单，回调函数的 fileName 字段给我们返回来的就是完整路径的
+		// strings.TrimPrefix 用于去掉前缀的dir从当前打包的相对路径开始,避免打包是绝对路径
+		// 这里的替换和上方一样，用于统一处理分隔符 unix分隔符在windows golang 本身实现了兼容
 		fileName = strings.ReplaceAll(fileName, "\\", "/")
 		hdr.Name = strings.TrimPrefix(fileName, dir+"/")
 
@@ -139,8 +140,7 @@ func Archive(src, dst string) (err error) {
 			return err
 		}
 
-		// 判断下文件是否是标准文件，如果不是就不处理了，
-		// 如： 目录，这里就只记录了文件信息，不会执行下面的 copy
+		// 判断下文件是否是标准文件，如果不是就不处理了 即忽略 link等
 		if !fi.Mode().IsRegular() {
 			return nil
 		}
@@ -159,7 +159,7 @@ func Archive(src, dst string) (err error) {
 		}
 
 		// 记录下过程，这个可以不记录，这个看需要，这样可以看到打包的过程
-		log.Printf("Archive %s ,write size %d byte\n", fileName, n)
+		slog.Info(fmt.Sprintf("Archive %s ,write size %d byte\n", fileName, n))
 
 		return nil
 	})
