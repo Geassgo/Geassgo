@@ -48,7 +48,7 @@ func main() {
 	case "chart":
 		_, err = helper.RunChart(context.Background(), targetPath)
 	case "task":
-		_, err = helper.RunTask(context.Background(), targetPath, valuePath)
+		_, err = helper.RunClaim(context.Background(), targetPath, valuePath)
 	default:
 		slog.Error("the mod is not support", "mode", mod)
 		return
