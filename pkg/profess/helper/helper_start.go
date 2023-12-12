@@ -97,7 +97,7 @@ func loadValuesFromFile(valuePath string, coverValues ...map[string]any) *contra
 	var values = &contract.Variable{Values: make(map[string]any)}
 	if valuePath != "" {
 		valuesFile, err := os.ReadFile(valuePath)
-		if err != nil {
+		if err == nil {
 			if err = yaml.Unmarshal(valuesFile, values.Values); err != nil {
 				panic(err)
 			}
