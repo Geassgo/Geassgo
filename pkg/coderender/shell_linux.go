@@ -17,3 +17,11 @@ func initShellCommand(ctx context.Context, command string, args ...any) *exec.Cm
 	}
 	return exec.CommandContext(ctx, "bash", "-c", command)
 }
+
+// 去掉末尾的换行符
+func cutTailLineBreak(str string) string {
+	if len(str) >= 1 && str[len(str)-1:] == "\n" {
+		return str[:len(str)-1]
+	}
+	return str
+}

@@ -18,11 +18,3 @@ func ExecShell(ctx context.Context, shell string, args ...any) (string, string, 
 	}
 	return cutTailLineBreak(std.String()), cutTailLineBreak(ste.String()), nil
 }
-
-// 去掉末尾的换行符
-func cutTailLineBreak(str string) string {
-	if len(str) >= 2 && str[len(str)-2:] == "\r\n" {
-		return str[:len(str)-2]
-	}
-	return str
-}
