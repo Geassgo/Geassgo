@@ -13,22 +13,37 @@ package helper
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
 	"os"
 )
 
+func init() {
+	_ = os.MkdirAll(getDefaultPath("temp"), 0755)
+}
+
+// RunChart4data 启动一个chart任务 使用valuesPath的变量 values可以为空
+// ctx 上下文对象
+// chart chart包
+// values 覆盖变量
 func RunChart4data(ctx context.Context, chart []byte, values map[string]any) (contract.Context, error) {
-	path := getDefaultPath("temp", uuid.New().String(), "chart.tgz")
+	path := getDefaultPath("temp", fmt.Sprintf("%s-chart.tgz", uuid.New().String()))
+	defer os.Remove(path)
 	if err := os.WriteFile(path, chart, 0755); err != nil {
 		return nil, err
 	}
 	return RunChart(ctx, path, values)
 }
 
-func RunClaim4data(ctx context.Context, taskData []byte, values map[string]any) (contract.Context, error) {
-	path := getDefaultPath("temp", uuid.New().String(), "main.yaml")
-	if err := os.WriteFile(path, taskData, 0755); err != nil {
+// RunClaim4data 启动一个claim任务 使用valuesPath的变量 values可以为空
+// ctx 上下文对象
+// data claim内容（yaml格式）
+// values 覆盖变量
+func RunClaim4data(ctx context.Context, data []byte, values map[string]any) (contract.Context, error) {
+	path := getDefaultPath("temp", fmt.Sprintf("%s-main.yaml", uuid.New().String()))
+	defer os.Remove(path)
+	if err := os.WriteFile(path, data, 0755); err != nil {
 		return nil, err
 	}
 	return RunClaim(ctx, path, "", values)
