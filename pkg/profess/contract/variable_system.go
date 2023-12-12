@@ -79,7 +79,8 @@ func _variableSystemGenerateAdapters(system *System) error {
 	if err != nil {
 		return err
 	}
-	for _, inter := range interfaces {
+	for i := len(interfaces) - 1; i >= 0; i-- {
+		inter := interfaces[i]
 		var adapter = Adapter{
 			Name: inter.Name,
 			Up:   inter.Flags&net.FlagUp != 0,
@@ -96,7 +97,6 @@ func _variableSystemGenerateAdapters(system *System) error {
 				// 若干4字节转换为nil 则表示无IPV4地址 可能为IPV6
 				ip := ips.IP.String()
 				if ips.IP.To4() == nil {
-
 					adapter.Ipv6 = append(adapter.Ipv6, Address{Ip: ip, Mask: net.IP(ips.Mask).String()})
 					// 实际可用ip添加到ipv6 栈中
 					if adapter.Up && inter.Flags&net.FlagLoopback == 0 {
