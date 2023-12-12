@@ -15,6 +15,7 @@ import (
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
 	"github.com/lengpucheng/Geassgo/pkg/profess/geass"
 	"gopkg.in/yaml.v3"
+	"log/slog"
 	"os"
 	"path/filepath"
 )
@@ -67,13 +68,17 @@ func (r *helperRoles) loadDefault(ctx contract.Context) (*contract.Variable, err
 	if err != nil {
 		return variable, err
 	}
-	err = yaml.Unmarshal(file, &val)
-	// 合并val
-	for k, v := range val {
-		if _, ok := variable.Values[k]; !ok {
-			variable.Values[k] = v
+	// 从default文件中读取值
+	if err = yaml.Unmarshal(file, &val); err == nil {
+		// 合并val
+		for k, v := range val {
+			if _, ok := variable.Values[k]; !ok {
+				variable.Values[k] = v
+			}
 		}
+		slog.Error("load default values fail!", "error", err.Error())
 	}
+
 	// TODO 这里日后需要多级渲染
 	return variable, nil
 }
