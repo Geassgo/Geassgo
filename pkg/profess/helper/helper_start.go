@@ -34,6 +34,7 @@ import (
 func RunClaim(ctx context.Context, claimPath, valuePath string, coverValues ...map[string]any) (contract.Context, error) {
 	values := loadValuesFromFile(valuePath, coverValues...)
 	tCtx := NewContext(ctx, geass.DefaultRuntime(), values)
+	tCtx.GetVariable().System = contract.GenerateSystemVariable(ctx)
 	return tCtx, LoadAndExecute4File(tCtx, claimPath)
 }
 
@@ -83,10 +84,11 @@ func runChartDir(ctx context.Context, chartPath string, coverValues ...map[strin
 	} else if coderender.IsNotExist(filepath.Join(chartPath, "tasks/main.yaml")) {
 		return nil, errors.New("the chart is illegal,not have main.yaml or tasks/main.yaml")
 	}
-	// 没有roles直接平铺的情况
+	// 没有roles直接平铺的情况则直接运行该roles
 	variable := loadValuesFromFile(filepath.Join(chartPath, "values.yaml"), coverValues...)
 	rolePath := chartPath + "/"
 	tCtx := NewContext(ctx, geass.NewRuntime(rolePath, rolePath, -1, nil), variable)
+	tCtx.GetVariable().System = contract.GenerateSystemVariable(ctx)
 	return tCtx, geass.Execute(tCtx, Roles, nil)
 }
 

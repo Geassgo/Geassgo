@@ -11,15 +11,17 @@
 
 package contract
 
+// Variable 变量值
 type Variable struct {
-	System   map[string]any `json:"system"`   // 系统变量
+	System   *System        `json:"system"`   // 系统变量
 	Values   map[string]any `json:"values"`   // 普通变量
 	Register map[string]any `json:"register"` // 注册变量
 }
 
+// Check 检查variable 存在为nil的补偿为非空空内容
 func (v *Variable) Check() *Variable {
 	if v.System == nil {
-		v.System = make(map[string]any)
+		v.System = &System{}
 	}
 	if v.Register == nil {
 		v.Register = make(map[string]any)
@@ -30,6 +32,7 @@ func (v *Variable) Check() *Variable {
 	return v
 }
 
+// ToMap 转换为map类型
 func (v *Variable) ToMap() map[string]any {
 	return map[string]any{
 		"system":   v.System,
@@ -41,12 +44,13 @@ func (v *Variable) ToMap() map[string]any {
 // DeepCopy 深拷贝
 func (v *Variable) DeepCopy() *Variable {
 	return &Variable{
-		System:   deepCopyMap(v.System),
+		System:   v.System,
 		Values:   deepCopyMap(v.Values),
 		Register: deepCopyMap(v.Register),
 	}
 }
 
+// 拷贝map
 func deepCopyMap(src map[string]any) map[string]any {
 	if src == nil {
 		return nil

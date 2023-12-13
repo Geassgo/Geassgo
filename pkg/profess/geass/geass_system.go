@@ -24,7 +24,7 @@ type geassSystem struct{}
 func (s *geassSystem) Execute(ctx contract.Context, val any) error {
 	if f, ok := val.(bool); f && ok {
 		// 刷新system
-		ctx.GetVariable().System["system"] = contract.GenerateSystemVariable(ctx)
+		ctx.GetVariable().System = contract.GenerateSystemVariable(ctx)
 	}
 	return nil
 }

@@ -35,6 +35,16 @@ type System struct {
 	Version     string             `json:"version"`     // 系统发行版本
 	Kernel      string             `json:"kernel"`      // 内核版本
 	Name        string             `json:"systemName"`  // 操作系统名称
+	Remote      Remote             `json:"remote"`      // 是否由远程主机发起
+}
+
+// Remote 远程控制
+// 本次任务是否由远程主机发起
+type Remote struct {
+	Enable bool   `json:"enable"` // 本次任务是否是远程调用
+	Host   string `json:"host"`   // 本次任务远程控制节点的IP或域名
+	Port   int    `json:"port"`   // 本次任务的远程主机控制节点的通信端口
+	Token  string `json:"token"`  // 本次任务远程主机的通信token
 }
 
 // Adapter 网络适配器
@@ -46,13 +56,14 @@ type Adapter struct {
 	Ipv6     []Address `json:"ipv6"`     // ipv6 地址
 }
 
+// Address 网络地址
 type Address struct {
 	Ip   string `json:"ip"`   // ip
 	Mask string `json:"mask"` // 掩码
 }
 
-func GenerateSystemVariable(ctx context.Context) System {
-	system := System{
+func GenerateSystemVariable(ctx context.Context) *System {
+	system := &System{
 		Ipv4s:       []string{},
 		Ipv6s:       []string{},
 		Inters:      []string{},
@@ -67,7 +78,7 @@ func GenerateSystemVariable(ctx context.Context) System {
 		Kernel:      coderender.GetOsKernel(ctx),
 	}
 	// 获取网络相关信息
-	if err := _variableSystemGenerateAdapters(&system); err != nil {
+	if err := _variableSystemGenerateAdapters(system); err != nil {
 		slog.Error("get variable system adapter fail!", "error", err.Error())
 	}
 	system.Name = fmt.Sprintf("%s %s", system.Release, system.Version)
