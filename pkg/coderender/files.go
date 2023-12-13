@@ -145,9 +145,9 @@ func MkLink(ctx context.Context, src, dest string) error {
 	switch runtime.GOOS {
 	case "windows":
 		if stat.IsDir() {
-			_, stderr, err = ExecShell(ctx, "mklink /J ", dest, src)
+			_, stderr, err = ExecCommandPrompt(ctx, "mklink /J ", dest, src)
 		} else {
-			_, stderr, err = ExecShell(ctx, "mklink", dest, src)
+			_, stderr, err = ExecCommandPrompt(ctx, "mklink", dest, src)
 		}
 	case "linux":
 		_, stderr, err = ExecShell(ctx, "ln -s", src, dest)

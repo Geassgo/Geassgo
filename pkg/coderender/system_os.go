@@ -71,7 +71,7 @@ func _osVersion4Linux(ctx context.Context) string {
 // 获取linux 的操作系统发行版本
 func _osVersion4Windows(ctx context.Context) string {
 	// ver 将返回 ‘Microsoft Windows [version a.bb.ccc.dd]’
-	std, _, err := ExecShell(ctx, "ver")
+	std, _, err := ExecCommandPrompt(ctx, "ver")
 	if err != nil {
 		return "unknown"
 	} else if len(std) <= len("\r\nMicrosoft Windows ") {

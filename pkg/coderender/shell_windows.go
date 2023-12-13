@@ -15,7 +15,7 @@ func initShellCommand(ctx context.Context, command string, args ...any) *exec.Cm
 			command = fmt.Sprintf("%s %s", command, arg)
 		}
 	}
-	return exec.CommandContext(ctx, "cmd", "/C", command)
+	return exec.CommandContext(ctx, "PowerShell", command)
 }
 
 // 初始化命令提示符
@@ -25,7 +25,7 @@ func initCommandPrompt(ctx context.Context, command string, args ...any) *exec.C
 			command = fmt.Sprintf("%s %v", command, arg)
 		}
 	}
-	return exec.CommandContext(ctx, "PowerShell", command)
+	return exec.CommandContext(ctx, "cmd", "/C", command)
 }
 
 // 去掉末尾的换行符
