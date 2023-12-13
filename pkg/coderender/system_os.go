@@ -25,7 +25,7 @@ func GetOsRelease(ctx context.Context) string {
 		// windows 直接返回
 		return "Microsoft Windows"
 	case "linux":
-		std, _, err := ExecShell(ctx, `cat /etc/os-release |grep ID= | grep -v VERSION |awk -F "[\"]" '{print $2}'`)
+		std, _, err := ExecShell(ctx, `cat /etc/os-release |grep ID= | grep -v VERSION |awk -F "[\"]" '{print $2}'`).Result()
 		if err == nil {
 			return std
 		}
@@ -51,7 +51,7 @@ func GetOsKernel(ctx context.Context) string {
 	case "windows":
 		return _osVersion4Windows(ctx)
 	case "linux":
-		std, _, err := ExecShell(ctx, "uname -r")
+		std, _, err := ExecShell(ctx, "uname -r").Result()
 		if err == nil {
 			return std
 		}
@@ -61,7 +61,7 @@ func GetOsKernel(ctx context.Context) string {
 
 // 获取linux 的操作系统发行版本
 func _osVersion4Linux(ctx context.Context) string {
-	std, _, err := ExecShell(ctx, `cat /etc/os-release |grep VERSION_ID |awk -F "[\"]" '{print $2}'`)
+	std, _, err := ExecShell(ctx, `cat /etc/os-release |grep VERSION_ID |awk -F "[\"]" '{print $2}'`).Result()
 	if err != nil {
 		return "unknown"
 	}
@@ -71,7 +71,7 @@ func _osVersion4Linux(ctx context.Context) string {
 // 获取linux 的操作系统发行版本
 func _osVersion4Windows(ctx context.Context) string {
 	// ver 将返回 ‘Microsoft Windows [version a.bb.ccc.dd]’
-	std, _, err := ExecCommandPrompt(ctx, "ver")
+	std, _, err := ExecCommandPrompt(ctx, "ver").Result2Utf8()
 	if err != nil {
 		return "unknown"
 	} else if len(std) <= len("\r\nMicrosoft Windows ") {

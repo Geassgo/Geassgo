@@ -145,12 +145,12 @@ func MkLink(ctx context.Context, src, dest string) error {
 	switch runtime.GOOS {
 	case "windows":
 		if stat.IsDir() {
-			_, stderr, err = ExecCommandPrompt(ctx, "mklink /J ", dest, src)
+			_, stderr, err = ExecCommandPrompt(ctx, "mklink /J ", dest, src).Result2Utf8()
 		} else {
-			_, stderr, err = ExecCommandPrompt(ctx, "mklink", dest, src)
+			_, stderr, err = ExecCommandPrompt(ctx, "mklink", dest, src).Result2Utf8()
 		}
 	case "linux":
-		_, stderr, err = ExecShell(ctx, "ln -s", src, dest)
+		_, stderr, err = ExecShell(ctx, "ln -s", src, dest).Result()
 	default:
 		return errors.New(fmt.Sprintf("no support this os %s", runtime.GOOS))
 	}

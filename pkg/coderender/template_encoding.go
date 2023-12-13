@@ -23,6 +23,8 @@ const (
 func EncodeAuto2Utf8(data []byte) []byte {
 	coding := GetCoding(data)
 	switch coding {
+	case UNKNOWN:
+		fallthrough
 	case GBK:
 		return EncodeGbk2Utf8(data)
 	case UTF8:
