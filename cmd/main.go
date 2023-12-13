@@ -51,7 +51,7 @@ func main() {
 		var defValue = map[string]any{}
 		if valuePath != "" {
 			file, err := os.ReadFile(valuePath)
-			if err == nil {
+			if err != nil {
 				slog.Error("load values fail!", "valuesPath", valuePath)
 			} else {
 				if err := yaml.Unmarshal(file, &defValue); err != nil {
