@@ -15,4 +15,5 @@ const (
 	ModuleValueNotSupport Code = 1 // 不支持的参数类型
 	ModuleNameNotSupport  Code = 2 // 不支持的Mod类型
 	ClaimYamlDecodeFail   Code = 3
+	NotSupportSystem      Code = 4 // 不支持的操作系统
 )

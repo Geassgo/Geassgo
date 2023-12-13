@@ -36,11 +36,28 @@ func (g *geassShell) Execute(ctx contract.Context, val any) error {
 	var err error
 	switch runtime.GOOS {
 	case "linux":
-		slog.Info("execute Shell:->" + shell.Shell)
-		std, ste, err = coderender.ExecShell(ctx, shell.Shell)
+		// 当shell存在者执行 Bash
+		if shell.Shell != "" {
+			slog.Info("execute Shell:-> " + shell.Shell)
+			std, ste, err = coderender.ExecShell(ctx, shell.Shell)
+			// 否则执行sh命令
+		} else {
+			slog.Info("execute Sh:-> " + shell.Command)
+			std, ste, err = coderender.ExecCommandPrompt(ctx, shell.Command)
+		}
+
 	case "windows":
-		slog.Info("execute Shell:-> " + shell.WinShell)
-		std, ste, err = coderender.ExecShell(ctx, shell.WinShell)
+		// 当shell存在则执行PowerShell
+		if shell.WinShell != "" {
+			slog.Info("execute PowerShell:-> " + shell.WinShell)
+			std, ste, err = coderender.ExecShell(ctx, shell.WinShell)
+			// 否则执行命令提示符 commandPrompt
+		} else {
+			slog.Info("execute CommandPrompt:-> " + shell.WinCommand)
+			std, ste, err = coderender.ExecShell(ctx, shell.WinCommand)
+		}
+		// 为避免windows的GBK编码导致的乱码情况
+		// 对输出的内容进行格式判断和转换
 		std = string(coderender.EncodeAuto2Utf8([]byte(std)))
 		ste = string(coderender.EncodeAuto2Utf8([]byte(ste)))
 	}
