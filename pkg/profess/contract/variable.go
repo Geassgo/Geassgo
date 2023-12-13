@@ -35,6 +35,9 @@ func (v *Variable) Check() *Variable {
 // ToMap 转换为map类型
 func (v *Variable) ToMap() map[string]any {
 	return map[string]any{
+		"System":   v.System,
+		"Values":   v.Values,
+		"Register": v.Register,
 		"system":   v.System,
 		"values":   v.Values,
 		"register": v.Register,

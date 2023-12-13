@@ -21,8 +21,13 @@ import (
 
 // FuncMap 核心的模板函数 包含 sprig和default 同helm一致
 func FuncMap() template.FuncMap {
-	funcMap := sprig.FuncMap()
+	// 获取 sprig 的 文本渲染函数
+	funcMap := sprig.TxtFuncMap()
+
+	// 添加默认的内置函数
 	templateFunc := DefaultTemplateFunc()
+
+	// merge func
 	for k, v := range templateFunc {
 		funcMap[k] = v
 	}
