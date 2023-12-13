@@ -6,6 +6,13 @@ import (
 	"os/exec"
 )
 
+// EncodeAuto2Utf84Exec 自动将Exec执行结果转换为UTF8类型
+// std,ste 对应执行的标准输出和输入 将分别转换为 UTF-8
+// err 为可能的错误 本方法将不对错误进行处理 原样返回
+func EncodeAuto2Utf84Exec(std, ste string, err error) (string, string, error) {
+	return string(EncodeAuto2Utf8([]byte(std))), string(EncodeAuto2Utf8([]byte(ste))), err
+}
+
 // ExecShell 执行shell
 // windows 	下为 powerShell
 // linux 	下为 bashShell
