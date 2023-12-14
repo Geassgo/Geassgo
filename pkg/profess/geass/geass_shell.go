@@ -12,6 +12,7 @@
 package geass
 
 import (
+	"fmt"
 	"github.com/lengpucheng/Geassgo/pkg/coderender"
 	"github.com/lengpucheng/Geassgo/pkg/geasserr"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
@@ -41,9 +42,11 @@ func (g *geassShell) Execute(ctx contract.Context, val any) error {
 			slog.Info("execute Shell:-> " + shell.Shell)
 			std, ste, err = coderender.ExecShell(ctx, shell.Shell).Result()
 			// 否则执行sh命令
-		} else {
+		} else if shell.Command != "" {
 			slog.Info("execute Sh:-> " + shell.Command)
 			std, ste, err = coderender.ExecCommandPrompt(ctx, shell.Command).Result()
+		} else {
+			return fmt.Errorf("not found the shell or command in this task on the os=%s", ctx.GetVariable().System.Name)
 		}
 
 	case "windows":
@@ -52,9 +55,11 @@ func (g *geassShell) Execute(ctx contract.Context, val any) error {
 			slog.Info("execute PowerShell:-> " + shell.WinShell)
 			std, ste, err = coderender.ExecShell(ctx, shell.WinShell).Result2Utf8()
 			// 否则执行命令提示符 commandPrompt
-		} else {
+		} else if shell.Command != "" {
 			slog.Info("execute CommandPrompt:-> " + shell.WinCommand)
-			std, ste, err = coderender.ExecShell(ctx, shell.WinCommand).Result2Utf8()
+			std, ste, err = coderender.ExecCommandPrompt(ctx, shell.WinCommand).Result2Utf8()
+		} else {
+			return fmt.Errorf("not found the win_shell or win_command in this task on the os=%s", ctx.GetVariable().System.Name)
 		}
 		// 为避免windows的GBK编码导致的乱码情况
 		// 对输出的内容进行格式判断和转换
