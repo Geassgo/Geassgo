@@ -33,6 +33,10 @@ func (e *geassFiles) Execute(ctx contract.Context, val any) error {
 		mFiles.Dest, _ = RenderStr(ctx, mFiles.Dest)
 	}
 	switch mFiles.Action {
+	case mod.FilesRead:
+		file, err := os.ReadFile(mFiles.Src)
+		ctx.SetStdout(string(file))
+		return err
 	case mod.FilesDelete: // 删除文件
 		return os.Remove(mFiles.Dest)
 	case mod.FilesMkdir: // 创建文件夹

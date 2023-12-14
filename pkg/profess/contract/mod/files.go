@@ -23,6 +23,7 @@ type Files struct {
 type FilesAction string
 
 const (
+	FilesRead      FilesAction = "read"       // 读取文件内容
 	FilesDelete    FilesAction = "del"        // 删除
 	FilesMkdir     FilesAction = "dir"        // 创建文件夹
 	FilesFile      FilesAction = "file"       // 创建文件
