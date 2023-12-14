@@ -76,7 +76,9 @@ func (r *helperRoles) loadDefault(ctx contract.Context) (*contract.Variable, err
 				variable.Values[k] = v
 			}
 		}
+	} else if err != nil {
 		slog.Error("load default values fail!", "error", err.Error())
+		return nil, err
 	}
 
 	// TODO 这里日后需要多级渲染

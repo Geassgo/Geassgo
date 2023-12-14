@@ -44,6 +44,15 @@ func RunClaim(ctx context.Context, selector contract.Selector, claimPath, valueP
 // valuePath values文件路径
 // coverValues 覆盖变量 map[string]any
 func RunChart(ctx context.Context, selector contract.Selector, chartPath string, coverValues ...map[string]any) (contract.Context, error) {
+	// 如果是文件夹当成chart包未打包的文件夹运行
+	if stat, _ := os.Stat(chartPath); stat.IsDir() {
+		slog.Info("Execute Charts dir", "dir", chartPath)
+		return runChartDir(ctx, geass.Default4Nil(selector), chartPath, coverValues...)
+	}
+
+	// 如果不是文件夹则意味着是chart包
+	// 将chart包解压到指定目录
+	// 并运行文件夹
 	dir := getDefaultPath("chart")
 	id := uuid.New().String()
 	dir = filepath.Join(dir, id)
