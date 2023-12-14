@@ -55,6 +55,7 @@ func DefaultTemplateFunc() template.FuncMap {
 		"toJson":        toJSON,
 		"fromJson":      fromJSON,
 		"fromJsonArray": fromJSONArray,
+		"transArrayStr": Slice2Any[string],
 	}
 }
 
@@ -128,7 +129,7 @@ func Exist(arr []interface{}, ts ...interface{}) bool {
 
 // ArrayIn 判断元素是否在数组中, belong 表示是否是属于(只有一个满足即可),false表示包含
 // arr或ts为nil时候 返回 ts==nil (空集包含空集,空集是然后集合的子集)
-func ArrayIn(arr []interface{}, belong bool, ts ...interface{}) bool {
+func ArrayIn(arr []any, belong bool, ts ...any) bool {
 	if arr == nil || ts == nil {
 		return ts == nil
 	}
@@ -144,7 +145,7 @@ func ArrayIn(arr []interface{}, belong bool, ts ...interface{}) bool {
 			return false
 		}
 	}
-	return false
+	return !belong
 }
 
 // Equals 判断两个是否相同
@@ -200,4 +201,13 @@ func Object(obj interface{}) string {
 		res = fmt.Sprintf(`"%v"`, obj)
 	}
 	return res
+}
+
+// Slice2Any 一切数组转[]any
+func Slice2Any[T any](slice []T) []any {
+	var anys []any
+	for _, v := range slice {
+		anys = append(anys, v)
+	}
+	return anys
 }
