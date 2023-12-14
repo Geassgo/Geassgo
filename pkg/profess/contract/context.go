@@ -17,6 +17,7 @@ import "context"
 type Context interface {
 	context.Context
 	Runtime
+	Selector
 	GetVariable() *Variable
 	SubContext(runtime Runtime) Context
 	SetStdout(stdout string)
@@ -31,4 +32,11 @@ type Runtime interface {
 	GetItemIndex() int   // 获取当前的迭代编号
 	GetLocation() string // 获取当前的yaml执行位置
 	GetRolePath() string // 获取当前的role位置
+}
+
+// Selector 运行时选择器
+type Selector interface {
+	GetTags() []string     // 获取执行时标签
+	GetSkipTags() []string // 获取执行时跳过标签
+	GetAction() string     // 获取执行时动作
 }

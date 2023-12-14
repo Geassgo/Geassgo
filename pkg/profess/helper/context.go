@@ -22,10 +22,10 @@ type Context struct {
 	subContext []contract.Context
 }
 
-func NewContext(ctx context.Context, runtime contract.Runtime, variable *contract.Variable) *Context {
+func NewContext(ctx context.Context, runtime contract.Runtime, selector contract.Selector, variable *contract.Variable) *Context {
 	variable.Check()
 	return &Context{
-		Context:    geass.NewContext(ctx, runtime, variable),
+		Context:    geass.NewContext(ctx, runtime, selector, variable),
 		subContext: make([]contract.Context, 0),
 	}
 }

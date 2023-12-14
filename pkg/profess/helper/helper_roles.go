@@ -41,7 +41,7 @@ func (r *helperRoles) Execute(ctx contract.Context, val any) error {
 	if err != nil {
 		return err
 	}
-	context := NewContext(ctx, ctx, variable)
+	context := NewContext(ctx, ctx, ctx, variable)
 	if c, ok := ctx.(*Context); ok {
 		c.subContext = append(c.subContext, context)
 	}

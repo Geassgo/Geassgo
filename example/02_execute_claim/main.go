@@ -30,7 +30,7 @@ func test() {
 	if err = yaml.Unmarshal(file, &values.Values); err != nil {
 		panic(err)
 	}
-	ctx := helper.NewContext(context.Background(), geass.DefaultRuntime(), values)
+	ctx := helper.NewContext(context.Background(), geass.DefaultRuntime(), geass.DefaultSelector(), values)
 	if err = helper.LoadAndExecute4File(ctx, "example/02_execute_claim/claim.yaml"); err != nil {
 		panic(err)
 	}

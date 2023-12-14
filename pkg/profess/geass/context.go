@@ -19,19 +19,21 @@ import (
 type Context struct {
 	context.Context
 	contract.Runtime
+	contract.Selector
 	variable *contract.Variable
 	stderr   string
 	stdout   string
 }
 
 func Background() *Context {
-	return NewContext(context.Background(), DefaultRuntime(), new(contract.Variable).Check())
+	return NewContext(context.Background(), DefaultRuntime(), DefaultSelector(), new(contract.Variable).Check())
 }
 
-func NewContext(ctx context.Context, runtime contract.Runtime, variable *contract.Variable) *Context {
+func NewContext(ctx context.Context, runtime contract.Runtime, selector contract.Selector, variable *contract.Variable) *Context {
 	return &Context{
 		Context:  ctx,
 		Runtime:  runtime,
+		Selector: selector,
 		variable: variable,
 	}
 }
@@ -59,6 +61,7 @@ func (c *Context) GetStderr() string {
 func (c *Context) SubContext(runtime contract.Runtime) contract.Context {
 	return &Context{
 		Context:  c.Context,
+		Selector: c.Selector,
 		variable: c.variable,
 		Runtime:  runtime,
 	}

@@ -21,7 +21,7 @@ import (
 
 func test() {
 	var values = &contract.Variable{Values: make(map[string]any)}
-	ctx := helper.NewContext(context.Background(), geass.DefaultRuntime(), values)
+	ctx := helper.NewContext(context.Background(), geass.DefaultRuntime(), geass.DefaultSelector(), values)
 	if err := helper.LoadAndExecute4File(ctx, "example/03_execute_roles/main.yaml"); err != nil {
 		panic(err)
 	}

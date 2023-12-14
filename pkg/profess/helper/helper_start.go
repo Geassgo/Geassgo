@@ -31,9 +31,9 @@ import (
 // valuePath values文件路径
 // coverValues values文件路径
 // coverValues 覆盖变量 map[string]any
-func RunClaim(ctx context.Context, claimPath, valuePath string, coverValues ...map[string]any) (contract.Context, error) {
+func RunClaim(ctx context.Context, selector contract.Selector, claimPath, valuePath string, coverValues ...map[string]any) (contract.Context, error) {
 	values := loadValuesFromFile(valuePath, coverValues...)
-	tCtx := NewContext(ctx, geass.DefaultRuntime(), values)
+	tCtx := NewContext(ctx, geass.DefaultRuntime(), geass.Default4Nil(selector), values)
 	tCtx.GetVariable().System = contract.GenerateSystemVariable(ctx)
 	return tCtx, LoadAndExecute4File(tCtx, claimPath)
 }
@@ -43,7 +43,7 @@ func RunClaim(ctx context.Context, claimPath, valuePath string, coverValues ...m
 // chartPath chart包路径路径
 // valuePath values文件路径
 // coverValues 覆盖变量 map[string]any
-func RunChart(ctx context.Context, chartPath string, coverValues ...map[string]any) (contract.Context, error) {
+func RunChart(ctx context.Context, selector contract.Selector, chartPath string, coverValues ...map[string]any) (contract.Context, error) {
 	dir := getDefaultPath("chart")
 	id := uuid.New().String()
 	dir = filepath.Join(dir, id)
@@ -61,7 +61,7 @@ func RunChart(ctx context.Context, chartPath string, coverValues ...map[string]a
 	for _, d := range readDir {
 		if d.IsDir() {
 			slog.Info("Execute Charts of", "name", d.Name())
-			return runChartDir(ctx, filepath.Join(dir, d.Name()), coverValues...)
+			return runChartDir(ctx, geass.Default4Nil(selector), filepath.Join(dir, d.Name()), coverValues...)
 		}
 	}
 	return nil, nil
@@ -72,7 +72,7 @@ func RunChart(ctx context.Context, chartPath string, coverValues ...map[string]a
 // chartPath chart包路径路径
 // valuePath values文件路径
 // coverValues 覆盖变量 map[string]any
-func runChartDir(ctx context.Context, chartPath string, coverValues ...map[string]any) (contract.Context, error) {
+func runChartDir(ctx context.Context, selector contract.Selector, chartPath string, coverValues ...map[string]any) (contract.Context, error) {
 	if !coderender.IsNotExist(filepath.Join(chartPath, "Chart.yaml")) {
 		// TODO 如果Chart.yaml 文件存在
 	}
@@ -80,14 +80,14 @@ func runChartDir(ctx context.Context, chartPath string, coverValues ...map[strin
 		return nil, errors.New("the chart is illegal,not have values.yaml file")
 	}
 	if !coderender.IsNotExist(filepath.Join(chartPath, "main.yaml")) {
-		return RunClaim(ctx, filepath.Join(chartPath, "main.yaml"), filepath.Join(chartPath, "values.yaml"))
+		return RunClaim(ctx, selector, filepath.Join(chartPath, "main.yaml"), filepath.Join(chartPath, "values.yaml"))
 	} else if coderender.IsNotExist(filepath.Join(chartPath, "tasks/main.yaml")) {
 		return nil, errors.New("the chart is illegal,not have main.yaml or tasks/main.yaml")
 	}
 	// 没有roles直接平铺的情况则直接运行该roles
 	variable := loadValuesFromFile(filepath.Join(chartPath, "values.yaml"), coverValues...)
 	rolePath := chartPath + "/"
-	tCtx := NewContext(ctx, geass.NewRuntime(rolePath, rolePath, -1, nil), variable)
+	tCtx := NewContext(ctx, geass.NewRuntime(rolePath, rolePath, -1, nil), geass.DefaultSelector(), variable)
 	tCtx.GetVariable().System = contract.GenerateSystemVariable(ctx)
 	return tCtx, geass.Execute(tCtx, Roles, nil)
 }

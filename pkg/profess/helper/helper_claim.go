@@ -30,8 +30,13 @@ const Claim = "_CLAIM_HELPER_"
 
 type helperClaim struct{}
 
-func (h *helperClaim) Execute(ctx contract.Context, val any) error {
+func (c *helperClaim) Execute(ctx contract.Context, val any) error {
 	claim := val.(*contract.Claim)
+	// 判断是否被筛选
+	if !claim.IsSelect(ctx) {
+		return nil
+	}
+
 	if ctx.GetItemIndex() < 0 {
 		slog.Info("********Task:", "name", claim.Name)
 	}
@@ -43,19 +48,19 @@ func (h *helperClaim) Execute(ctx contract.Context, val any) error {
 
 	// 执行
 	if claim.WithItem != nil {
-		err = h.withItem(ctx, claim)
+		err = c.withItem(ctx, claim)
 	} else if claim.Include != "" {
-		err = h.withInclude(ctx, claim)
+		err = c.withInclude(ctx, claim)
 	} else if claim.Roles != nil {
-		err = h.withRoles(ctx, claim)
+		err = c.withRoles(ctx, claim)
 	} else if claim.Tasks != nil {
-		err = h.withTasks(ctx, claim)
+		err = c.withTasks(ctx, claim)
 	} else {
-		err = h.withGeass(ctx, claim)
+		err = c.withGeass(ctx, claim)
 	}
 
 	// 错误处理
-	if err = h.withError(err, ctx, claim); err != nil {
+	if err = c.withError(err, ctx, claim); err != nil {
 		return err
 	}
 	// 注册变量

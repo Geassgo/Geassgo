@@ -27,7 +27,7 @@ func main() {
 }
 
 func test() {
-	chart, err := helper.RunChart(context.Background(), "example/04_execute_charts/out/otnm-manager.tgz")
+	chart, err := helper.RunChart(context.Background(), nil, "example/04_execute_charts/out/otnm-manager.tgz")
 	fmt.Println(chart, err)
 }
 
