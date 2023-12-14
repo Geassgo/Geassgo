@@ -13,6 +13,15 @@ package contract
 
 import "github.com/lengpucheng/Geassgo/pkg/coderender"
 
+// Loop 循环探测
+// 将该任务最多retries次 每次间隔 delay 秒
+// 当 until的条件满足（返回true) 时 结束
+type Loop struct {
+	Until   string `json:"until" yaml:"until"`     // 条件 为true即为成功
+	Retries int    `json:"retries" yaml:"retries"` // 重试次数
+	Delay   int    `json:"delay" yaml:"delay"`     // 每次延时
+}
+
 type Claim struct {
 	Mod         `json:",inline" yaml:",inline"`
 	Task        `json:",inline" yaml:",inline"`
@@ -23,6 +32,8 @@ type Claim struct {
 	Tasks       []Claim  `json:"tasks" yaml:"tasks"`               // 任务组
 	Roles       []string `json:"roles" yaml:"roles"`               // 导入角色
 	Include     string   `json:"include" yaml:"include"`           // 导入外部Claim
+	// 循环执行的次数
+	Loop *Loop `json:"loop" yaml:"loop"` // 循环探测
 	// 标签过滤
 	// 若 执行时 为传入 标签/跳过标签 则该配置项目不生效
 	// 若 执行时 传入 tags 则将只会执行设置了tag 且 匹配的

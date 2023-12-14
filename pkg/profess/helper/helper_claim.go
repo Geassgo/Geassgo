@@ -12,6 +12,7 @@
 package helper
 
 import (
+	"fmt"
 	"github.com/lengpucheng/Geassgo/pkg/coderender"
 	"github.com/lengpucheng/Geassgo/pkg/geasserr"
 	"github.com/lengpucheng/Geassgo/pkg/profess/contract"
@@ -20,6 +21,8 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 )
 
 func init() {
@@ -40,6 +43,35 @@ func (c *helperClaim) Execute(ctx contract.Context, val any) error {
 	if ctx.GetItemIndex() < 0 {
 		slog.Info("********Task:", "name", claim.Name)
 	}
+	if claim.Loop == nil {
+		return c.executeClaim(ctx, claim)
+	}
+	var retry int
+	// 当 loop 不为nil 时 加入循环
+	for {
+		// 判断是否超时
+		retry++
+		if retry > claim.Loop.Retries {
+			return c.withError(fmt.Errorf("loop retry timeout---> retry %d ", retry), ctx, claim)
+		}
+		// 执行本次claim
+		err := c.executeClaim(ctx, claim)
+		slog.Info("loop this task,please wait", "retry", retry)
+		// 判断是否达成条件
+		if str, e := geass.RenderStr(ctx, claim.Loop.Until); e == nil && strings.ToLower(str) == "true" {
+			// 满足条件后返回执行的可能错误
+			return err
+		}
+
+		// 延迟等待
+		time.Sleep(time.Duration(claim.Loop.Delay) * time.Second)
+	}
+}
+
+// 执行正常的claim内容
+// ctx 上下文对象
+// claim 任务清单
+func (c *helperClaim) executeClaim(ctx contract.Context, claim *contract.Claim) error {
 	if !claim.IsWhen(ctx.GetVariable()) {
 		slog.Info("skipping")
 		return nil
@@ -60,9 +92,7 @@ func (c *helperClaim) Execute(ctx contract.Context, val any) error {
 	}
 
 	// 错误处理
-	if err = c.withError(err, ctx, claim); err != nil {
-		return err
-	}
+	err = c.withError(err, ctx, claim)
 	// 注册变量
 	if claim.Register != "" {
 		ctx.GetVariable().Register[claim.Register] = ctx.GetStdout()
@@ -146,6 +176,8 @@ func (c *helperClaim) withItem(ctx contract.Context, claim *contract.Claim) erro
 
 // 错误处理
 func (c *helperClaim) withError(err error, ctx contract.Context, claim *contract.Claim) error {
+	ctx.GetVariable().System.LastErr = err == nil
+	ctx.GetVariable().System.LastIgnore = err != nil && claim.IgnoreError
 	if err != nil {
 		if claim.IgnoreError {
 			slog.Warn("Ignore.....", "error", err.Error(), "stderr", ctx.GetStderr())

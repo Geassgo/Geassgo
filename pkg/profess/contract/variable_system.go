@@ -36,6 +36,8 @@ type System struct {
 	Kernel      string             `json:"kernel"`      // 内核版本
 	Name        string             `json:"systemName"`  // 操作系统名称
 	Remote      Remote             `json:"remote"`      // 是否由远程主机发起
+	LastErr     bool               `json:"LastErr"`     // 上一次是否错误
+	LastIgnore  bool               `json:"lastIgnore"`  // 上一次是否忽略
 }
 
 // Remote 远程控制
